@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  orderbook-explorer-prod:
+    build:
+      context: ../../../
+      dockerfile: ./infrastructure/Dockerfile
+    image: devorai/orderbook:0.0.1
+    container_name: orderbook-explorer-prod
+    env_file:
+      - ./.env
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    networks:
+      - orai-network
+
+networks:
+  orai-network:
+    external: false
+    name: orai-network
