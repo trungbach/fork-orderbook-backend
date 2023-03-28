@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CrawlRpcModule } from 'src/modules/crawl-rpc/crawl-rpc.module';
-import { SeedCommand } from './commands';
 import config from './config';
 import { postgresConfig } from './config/postgres';
+import { CrawlRpcModule } from './modules/crawl-rpc/crawl-rpc.module';
+import { CommandModule } from './modules/only-cmd/command/command.module';
 
 // import and provider run all commands and run server
 let importModules = [
@@ -12,18 +12,11 @@ let importModules = [
   TypeOrmModule.forRoot(postgresConfig)
 ] as any[];
 
-let providerModule = [
-
-];
-
 if (config.isRunCmd) { // run command line
   importModules = importModules.concat([
-
+    CommandModule
   ]);
-  providerModule = providerModule.concat([
-    SeedCommand
-  ]);
-} else { // run server
+} else { // run web
   importModules = importModules.concat([
     ScheduleModule.forRoot(),
   ]);
@@ -32,6 +25,6 @@ if (config.isRunCmd) { // run command line
 @Module({
   imports: importModules,
   controllers: [],
-  providers: providerModule,
+  providers: [],
 })
 export class AppModule {}

@@ -1,4 +1,8 @@
-import 'dotenv/config';
+/**
+ * init env run cmd
+ */
+process.env.RUN_CMD='1';
+
 import { CommandFactory } from 'nest-commander';
 import { AppModule } from './app.module';
 import { LogService } from './utils/log-provider/log.service';
