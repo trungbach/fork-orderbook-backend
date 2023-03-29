@@ -1,43 +1,46 @@
-import { 
-  Entity,
-  PrimaryGeneratedColumn,
-  Column
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { CreatedAt, UpdatedAt } from './base';
 
 @Entity('o_order')
 export class Order {
   @PrimaryGeneratedColumn({
-    unsigned: true
+    unsigned: true,
   })
   id: number;
 
   @Column({
-    name: 'product_id'
+    name: 'product_id',
+    type: 'int8',
   })
-  productId: string;
+  productId: number;
 
   @Column({
     type: 'decimal',
     precision: 32,
-    scale: 16
+    scale: 16,
   })
-  price: number
+  price: number;
 
   @Column({
     type: 'decimal',
     precision: 32,
-    scale: 16
+    scale: 16,
   })
-  amount: number
+  amount: number;
 
   @Column()
-  side: number
+  side: number;
 
   @Column({
     type: 'timestamp',
   })
-  time: Date
+  time: Date;
+
+  @Column({
+    type: 'int',
+    name: 'user_id',
+  })
+  userId: number;
 
   @CreatedAt()
   created_at?: Date;
