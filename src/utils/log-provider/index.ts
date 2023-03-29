@@ -10,12 +10,12 @@ if (!fs.existsSync(folderLogs)){
 }
 const logStdout = process.stdout;
 
-function logConsole(d) {
+export function logConsole(d) {
   logStdout.write(util.format(d) + '\n');
 }
 
 function logFile(d, file) {
-  var logText = '';
+  let logText = '';
   for (const i in d) {
     logText += util.format(d[i]) + ' -- ';
   }

@@ -13,15 +13,6 @@ let importModules = [
   TypeOrmModule.forRoot(postgresConfig),
 ] as any[];
 
-let providerModule = [];
-
-if (config.isRunCmd) {
-  // run command line
-  importModules = importModules.concat([]);
-
-  providerModule = providerModule.concat([SeedCommand]);
-} else {
-  // run server
 if (config.isRunCmd) { // run command line
   importModules = importModules.concat([
     CommandModule

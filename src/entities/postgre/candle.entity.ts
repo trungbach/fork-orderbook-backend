@@ -3,12 +3,12 @@ import { PairTable } from './base';
 
 @Entity('o_candle')
 export class Candle extends PairTable {
-  @Column('string', {
+  @Column({
     name: 'candle_id',
   })
   candle_id: string;
 
-  @Column('string', {
+  @Column({
     name: 'product_id',
   })
   productId: string;
