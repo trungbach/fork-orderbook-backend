@@ -2,7 +2,7 @@ import PostgresDB from 'src/config/postgres';
 import { Candle } from '../../entities/postgre/candle.entity';
 
 export const CandleRepository = PostgresDB.getRepository(Candle).extend({
-  getLastCandleByProductId(productId: number, granularity: number) {
+  findLastCandleByProductId(productId: number, granularity: number) {
     const lastCandle = this.createQueryBuilder('candle')
       .where('candle.product_id = :product_id', { product_id: productId })
       .andWhere('candle.granularity = :granularity', { granularity })
@@ -13,26 +13,19 @@ export const CandleRepository = PostgresDB.getRepository(Candle).extend({
     return lastCandle;
   },
 
-  getCandlesbyByProductId(
+  findCandlesbyByProductId(
     productId: number,
     granularity: number,
-    limit?: number,
-    offset?: number,
+    startTime: number,
+    endTime: number,
   ) {
-    let qb = this.createQueryBuilder('candle')
+    const qb = this.createQueryBuilder('candle')
       .where('candle.product_id = :product_id', { product_id: productId })
-      .andWhere('candle.granularity = :granularity', { granularity });
-
-    const count = qb.count();
-
-    if (limit) qb = qb.limit(limit);
-
-    if (offset) qb = qb.offset(offset);
+      .andWhere('candle.granularity = :granularity', { granularity })
+      .andWhere('candle.time >= :startTime', { startTime })
+      .andWhere('candle.time <= :endTime', { endTime });
 
     const candles = qb.getMany();
-    return {
-      count,
-      candles,
-    };
+    return candles;
   },
 });

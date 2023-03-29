@@ -1,6 +1,6 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { EventTick } from '../types/event-tick';
+import { OrderEvent } from '../types/order-event';
 import { CandleRepository } from 'src/repositories/postgre';
 import { roundTime } from 'src/utils/date';
 import { Candle } from 'src/entities/postgre';
@@ -13,12 +13,12 @@ export class CandleConsumer {
   constructor() {} // inject logging service
 
   @Process('tick-market-job')
-  async handleTickJob(job: Job<Array<EventTick>>): Promise<void> {
+  async handleTickJob(job: Job<Array<OrderEvent>>): Promise<void> {
     const eventTick = job.data;
     await this.handleTickEvent(eventTick);
   }
 
-  private async handleTickEvent(ticks: EventTick[]) {
+  private async handleTickEvent(ticks: OrderEvent[]) {
     const candles: { [key: string]: Candle } = {};
 
     for (const tick of ticks) {

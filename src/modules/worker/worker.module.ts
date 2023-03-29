@@ -7,8 +7,8 @@ import { CandleConsumer } from './consumers/candle-consumer';
   providers: [CandleConsumer],
   imports: [
     BullModule.registerQueue({
-      name: 'tick-marker',
+      name: 'processor',
     }),
   ],
 })
-export class TickHandlerModule {}
+export class WorkerModule {}
