@@ -1,4 +1,4 @@
-import seedsClass = require('./index');
+import seedsClass = require('../../../../../database/seeds');
 
 export default class AppSeedFactory {
     async run(nameSeedInput: string) {

@@ -1,12 +1,12 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
-import AppSeedFactory from 'src/database/seeds/app.fatory';
+import AppSeedFactory from './factory/app.fatory';
 
 interface SeedCommandOptions {
   class?: string;
 }
 
 @Command({ name: 'seed', description: 'Seeder' })
-export class SeedCommand implements CommandRunner {
+export class SeedCmd implements CommandRunner {
   constructor() {}
 
   async run(
