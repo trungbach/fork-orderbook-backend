@@ -4,6 +4,7 @@ import {
   Column
 } from 'typeorm';
 import { CreatedAt, UpdatedAt } from './base';
+import * as moment from 'moment'
 
 @Entity('o_order')
 export class Order {

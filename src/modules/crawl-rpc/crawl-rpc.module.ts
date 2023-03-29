@@ -1,10 +1,18 @@
 import {  Module } from '@nestjs/common';
 import { CrawlRpcService } from './services';
-import { HomeController } from './controllers';
+import {
+  HomeController,
+  ProductController
+} from './controllers';
 
 @Module({
-  controllers: [HomeController],
-  providers: [CrawlRpcService],
+  controllers: [
+    HomeController,
+    ProductController
+  ],
+  providers: [
+    CrawlRpcService
+  ],
   imports: [],
 })
 export class CrawlRpcModule { }

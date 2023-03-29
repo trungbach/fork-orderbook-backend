@@ -4,7 +4,6 @@ import { CandleRepository } from 'src/repositories/postgre';
 const seeds: Candle[] = [
   {
     id: 1,
-    candle_id: '1_1680016500_15',
     productId: 1,
     granularity: 1,
     time: 1680016500,
@@ -16,7 +15,6 @@ const seeds: Candle[] = [
   },
   {
     id: 2,
-    candle_id: '2_1680015600_30',
     productId: 1,
     granularity: 1,
     time: 1680015600,
@@ -28,7 +26,6 @@ const seeds: Candle[] = [
   },
   {
     id: 3,
-    candle_id: '3_1680026400_360',
     productId: 1,
     granularity: 1,
     time: 1680026400,
