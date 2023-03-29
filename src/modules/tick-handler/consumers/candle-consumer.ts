@@ -29,18 +29,18 @@ export class CandleConsumer {
         const newTime = roundTime(new Date(time), granularity);
         const candle_id = `${productId}-${newTime}-${granularity}`;
 
-        // candle = find(candles, ['candle_id', candle_id]);
         candle = candles[candle_id];
         if (!candle) {
           candle = await CandleRepository.findOne({
             where: {
-              candle_id,
+              productId: +productId,
+              granularity,
+              time: newTime,
             },
           });
         }
 
         if (!candle) {
-          candle.candle_id = candle_id;
           candle.granularity = granularity;
           candle.productId = +productId;
           candle.time = newTime;
