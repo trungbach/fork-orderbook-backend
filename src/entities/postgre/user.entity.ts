@@ -16,8 +16,8 @@ export class User {
   address: string;
 
   @CreatedAt()
-  created_at: moment.Moment;
+  created_at?: Date;
 
   @UpdatedAt()
-  updated_at: moment.Moment;
+  updated_at?: Date;
 }

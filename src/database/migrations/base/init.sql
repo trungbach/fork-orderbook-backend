@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "o_product" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "symbol" varchar(20),
   "slippage" decimal(32,16),
   "created_at" timestamp DEFAULT (now()),
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "o_product" (
 );
 
 CREATE TABLE IF NOT EXISTS "o_order" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "product_id" int NOT NULL,
   "price" decimal(32,16) NOT NULL,
   "amount" decimal(32,16) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS "o_order" (
 );
 
 CREATE TABLE IF NOT EXISTS "o_user" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "address" varchar(100),
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp DEFAULT (now()),
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS "o_user" (
 );
 
 CREATE TABLE IF NOT EXISTS "o_candle" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "product_id" int NOT NULL,
   "open" decimal(32,16) NOT NULL,
   "close" decimal(32,16) NOT NULL,

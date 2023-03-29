@@ -4,7 +4,6 @@ import {
   Column
 } from 'typeorm';
 import { CreatedAt, UpdatedAt } from './base';
-import * as moment from 'moment'
 
 @Entity('o_order')
 export class Order {
@@ -38,11 +37,11 @@ export class Order {
   @Column({
     type: 'timestamp',
   })
-  time: moment.Moment
+  time: Date
 
   @CreatedAt()
-  created_at: moment.Moment;
+  created_at?: Date;
 
   @UpdatedAt()
-  updated_at: moment.Moment;
+  updated_at?: Date;
 }

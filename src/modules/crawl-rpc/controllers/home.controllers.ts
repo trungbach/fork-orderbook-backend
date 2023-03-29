@@ -13,9 +13,4 @@ export class HomeController {
   index() {
     return `Start app orderbook: - env: ${config.APP_ENV} - isProd: ${config.isProd}`;
   }
-
-  @Get('pair')
-  async pairOne() {
-    return this.crawlRpcSerc.getOnePair();
-  }
 }

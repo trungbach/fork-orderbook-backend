@@ -6,10 +6,8 @@ import { ProductRepository } from 'src/repositories/postgre';
 
 @Controller('product')
 export class ProductController {
-  constructor() { }
-
   @Get('list')
-  getlList() {
+  async getlList() {
     return ProductRepository.find();
   }
 }
