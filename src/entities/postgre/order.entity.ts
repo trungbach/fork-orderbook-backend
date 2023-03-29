@@ -5,36 +5,39 @@ import {
 } from 'typeorm';
 import { CreatedAt, UpdatedAt } from './base';
 
-@Entity('o_pair_info')
-export class PairInfo {
+@Entity('o_order')
+export class Order {
   @PrimaryGeneratedColumn({
     unsigned: true
   })
   id: number;
 
-  @Column()
-  from: string;
-
-  @Column()
-  to: string;
-
   @Column({
-    name: 'from_name'
+    name: 'product_id'
   })
-  fromName: string;
-
-  @Column({
-    name: 'to_name'
-  })
-  toName: string;
+  productId: string;
 
   @Column({
     type: 'decimal',
-    precision: 8,
-    scale: 5,
-    default: 0
+    precision: 32,
+    scale: 16
   })
-  slippage: number
+  price: number
+
+  @Column({
+    type: 'decimal',
+    precision: 32,
+    scale: 16
+  })
+  amount: number
+
+  @Column()
+  side: number
+
+  @Column({
+    type: 'timestamp',
+  })
+  time: moment.Moment
 
   @CreatedAt()
   created_at: moment.Moment;

@@ -9,11 +9,6 @@ export class Candle {
   id: number;
 
   @Column({
-    name: 'candle_id',
-  })
-  candle_id: string;
-
-  @Column({
     name: 'product_id',
   })
   productId: number;
