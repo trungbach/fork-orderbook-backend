@@ -13,7 +13,7 @@ export class SeedCmd implements CommandRunner {
     passedParam: string[],
     options?: SeedCommandOptions,
   ): Promise<void> {
-    let seedClass = options.class;
+    const seedClass = options.class;
     if (!seedClass) {
       console.log('Seed class null!');
       return;

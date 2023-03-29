@@ -26,4 +26,4 @@ export class PairOraiUsdtSeed {
       await PariOraiUsdtRepository.save(newItem);
     }
   }
-};
+}

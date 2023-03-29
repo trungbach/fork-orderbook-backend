@@ -1,8 +1,13 @@
 import { Column, Entity } from 'typeorm';
-import { PairTable } from './base';
 
 @Entity('o_candle')
-export class Candle extends PairTable {
+export class Candle {
+  @Column({
+    name: 'id',
+    primary: true,
+  })
+  id: number;
+
   @Column({
     name: 'candle_id',
   })
@@ -11,9 +16,9 @@ export class Candle extends PairTable {
   @Column({
     name: 'product_id',
   })
-  productId: string;
+  productId: number;
 
-  @Column('int8', {
+  @Column('bigint', {
     name: 'granularity',
   })
   granularity: number;
@@ -48,6 +53,6 @@ export class Candle extends PairTable {
   })
   volume: number;
 
-  @Column()
+  @Column('bigint')
   time: number;
 }

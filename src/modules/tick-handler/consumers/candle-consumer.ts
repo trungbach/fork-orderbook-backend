@@ -4,7 +4,7 @@ import { EventTick } from '../types/event-tick';
 import { CandleRepository } from 'src/repositories/postgre';
 import { roundTime } from 'src/utils/date';
 import { Candle } from 'src/entities/postgre';
-import { min, max, find, add } from 'lodash';
+import { min, max, add } from 'lodash';
 
 @Processor('tick-marker')
 export class CandleConsumer {
@@ -42,7 +42,7 @@ export class CandleConsumer {
         if (!candle) {
           candle.candle_id = candle_id;
           candle.granularity = granularity;
-          candle.productId = productId;
+          candle.productId = +productId;
           candle.time = newTime;
           candle.close = price;
           candle.high = price;
