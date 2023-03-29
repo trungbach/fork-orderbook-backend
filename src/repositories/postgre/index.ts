@@ -1,2 +1,2 @@
-export * from './pair_orai_usdt.repository';
+export * from './pair_info.repository';
 export * from './candle.repository';
