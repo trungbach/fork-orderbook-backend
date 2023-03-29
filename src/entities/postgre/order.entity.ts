@@ -42,6 +42,12 @@ export class Order {
   })
   userId: number;
 
+  @Column({
+    type: 'int',
+    name: 'status',
+  })
+  status: number;
+
   @CreatedAt()
   created_at?: Date;
 

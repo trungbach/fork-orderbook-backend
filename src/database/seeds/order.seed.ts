@@ -10,6 +10,7 @@ const seeds: Order[] = [
     amount: 100,
     side: 1,
     time: new Date(),
+    status: 1
     
   },
   {
@@ -20,6 +21,7 @@ const seeds: Order[] = [
     amount: 100,
     side: 1,
     time: new Date(),
+    status: 2
   },
   {
     id: 3,
@@ -29,19 +31,20 @@ const seeds: Order[] = [
     amount: 100,
     side: 1,
     time: new Date(),
+    status: 2
   },
 ];
 
-export class CandleSeed {
+export class OrderSeed {
   async run() {
     for await (const item of seeds) {
-      await this.insertCandle(item);
+      await this.insertItem(item);
     }
 
-    console.log('Seed candles success');
+    console.log('Seed Order success');
   }
 
-  async insertCandle(item: Order) {
+  async insertItem(item: Order) {
     const itemDb = await OrdereRepository.findOne({
       where: {
         id: item.id,

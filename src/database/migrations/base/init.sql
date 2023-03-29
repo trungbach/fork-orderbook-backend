@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS "o_order" (
   "side" int NOT NULL,
   "time" timestamp,
   "user_id" int NOT NULL,
-  "status" int NOT NULL
+  "status" int NOT NULL,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now())
 );
 
 CREATE TABLE IF NOT EXISTS "o_user" (
