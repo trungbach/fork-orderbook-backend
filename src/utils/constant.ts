@@ -10,6 +10,14 @@ export enum OrderSide {
   BUY = 2,
 }
 
+/**
+ * direction key = direction of contract response
+ */
+export const OrderDirection = {
+  Buy: OrderSide.BUY,
+  Sell: OrderSide.SELL,
+};
+
 export enum OrderAction {
   SUBMIT_ORDER = 'SUBMIT_ORDER',
   EXECUTE_ORDER = 'EXECUTE_ORDER',

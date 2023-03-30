@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import config from './config';
+import config, { redisOption } from './config';
 import { postgresConfig } from './config/postgres';
 import { BullModule } from '@nestjs/bull';
 import { CrawlRpcModule } from './modules/crawl-rpc/crawl-rpc.module';
@@ -14,10 +14,8 @@ let importModules = [
   CrawlRpcModule,
   TypeOrmModule.forRoot(postgresConfig),
   BullModule.forRoot({
-    redis: {
-      host: config.redis.host,
-      port: +config.redis.port,
-    },
+    redis: redisOption,
+    prefix: 'ob_',
   }),
 ] as any[];
 
@@ -28,8 +26,8 @@ if (config.isRunCmd) {
   // run web
   importModules = importModules.concat([
     ScheduleModule.forRoot(),
-    WorkerModule,
     ApiModule,
+    WorkerModule,
   ]);
 }
 

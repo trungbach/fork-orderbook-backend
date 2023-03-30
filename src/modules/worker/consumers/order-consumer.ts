@@ -15,6 +15,7 @@ export class OrderConsumer {
 
   @Process('order-job')
   async mainProcessOrder(job: Job<OrderEvent[]>): Promise<void> {
+    console.log(111111111111, job.id, job.data);
     const orderEvents = job.data;
     await this.handleOrderEvents(orderEvents);
   }
@@ -121,17 +122,17 @@ export class OrderConsumer {
 
   private async handleOrderEvents(orders: OrderEvent[]) {
     for (const order of orders) {
-        switch (order.action) {
-            case OrderAction.SUBMIT_ORDER:
-                await this.handleSubmitOrder(order);
-                break;
-            case OrderAction.EXECUTE_ORDER:
-                await this.handleExecuteOrder(order);
-                break;
-            case OrderAction.CANCELLED:
-                await this.handleCancelOrder(order);
-                break
-        }
+      switch (order.action) {
+        case OrderAction.SUBMIT_ORDER:
+          await this.handleSubmitOrder(order);
+          break;
+        case OrderAction.EXECUTE_ORDER:
+          await this.handleExecuteOrder(order);
+          break;
+        case OrderAction.CANCELLED:
+          await this.handleCancelOrder(order);
+          break;
+      }
     }
   }
 }
