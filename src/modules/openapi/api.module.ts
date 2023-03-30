@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { OrderController, UserController } from './controllers';
 import { CandleController } from './controllers/candle.controller';
+import { CandleMiddleware } from './middlewares/candle.middleware';
 import { PaginationMiddleware } from './middlewares/pagination.middleware';
 import { OrderService, UserService } from './services';
 import { CandleService } from './services/candle.service';
@@ -28,5 +29,10 @@ export class ApiModule implements NestModule {
         method: RequestMethod.GET,
       },
     );
+
+    consumer.apply(CandleMiddleware).forRoutes({
+      path: '/v1/candle*',
+      method: RequestMethod.GET,
+    });
   }
 }
