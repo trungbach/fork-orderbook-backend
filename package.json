@@ -1,5 +1,5 @@
 {
-  "name": "nest_learn",
+  "name": "oraichain_orderbook_backend",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -30,6 +30,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^2.1.0",
+    "@nestjs/swagger": "^5.2.1",
     "@nestjs/typeorm": "^8.1.4",
     "bull": "^4.10.4",
     "class-transformer": "^0.5.1",
@@ -43,6 +44,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "swagger-ui-express": "^4.6.2",
     "typeorm": "^0.3.12"
   },
   "devDependencies": {
@@ -88,7 +90,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "engines" : { 
-    "node" : ">=18.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

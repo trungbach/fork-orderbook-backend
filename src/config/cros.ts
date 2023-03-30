@@ -16,7 +16,8 @@ const CORS_SITE = {
   credentials: true,
   origin: '*' as any,
 };
-let sites: String[] = [];
+let sites: string[] = [];
+
 if (config.CORS_ORIGINS) {
   sites = config.CORS_ORIGINS.split(',')
 }

@@ -12,15 +12,15 @@ export class OrderService {
 
   async getByProduct(
     productId: number,
-    size: number,
-    page: number,
+    limit: number,
+    offset: number,
     address?: string,
     status?: number,
   ): Promise<PageList<OrderDto[]>> {
     const { count, orders } = await OrdereRepository.findOrderByProduct(
       productId,
-      size,
-      page,
+      limit,
+      offset,
       address,
       status,
     );
@@ -31,15 +31,14 @@ export class OrderService {
 
   async getByAddress(
     address: string,
-    size: number,
-    page: number,
+    limit: number,
+    offset: number,
   ): Promise<PageList<OrderDto[]>> {
     const { count, orders } = await OrdereRepository.findByAddress(
       address,
-      size,
-      page,
+      limit,
+      offset,
     );
-
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
     return new PageList<OrderDto[]>(count, items);
   }

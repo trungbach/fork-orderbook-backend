@@ -7,7 +7,7 @@ import { CandleConsumer } from './consumers/candle-consumer';
   providers: [CandleConsumer],
   imports: [
     BullModule.registerQueue({
-      name: 'processor',
+      name: 'order-queue',
     }),
   ],
 })

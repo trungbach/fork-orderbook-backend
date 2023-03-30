@@ -6,19 +6,19 @@ import { roundTime } from 'src/utils/date';
 import { Candle } from 'src/entities/postgre';
 import { min, max, add } from 'lodash';
 
-@Processor('tick-marker')
+@Processor('order-queue')
 export class CandleConsumer {
   private GRANULARITY_ARR = [1, 5, 15, 30, 60, 360, 1440];
 
   constructor() {} // inject logging service
 
-  @Process('tick-market-job')
+  @Process('order-event')
   async handleTickJob(job: Job<Array<OrderEvent>>): Promise<void> {
     const eventTick = job.data;
-    await this.handleTickEvent(eventTick);
+    await this.handleOrderEvents(eventTick);
   }
 
-  private async handleTickEvent(ticks: OrderEvent[]) {
+  private async handleOrderEvents(ticks: OrderEvent[]) {
     const candles: { [key: string]: Candle } = {};
 
     for (const tick of ticks) {

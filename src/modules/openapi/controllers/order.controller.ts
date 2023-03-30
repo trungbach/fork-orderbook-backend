@@ -1,34 +1,36 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Pagination } from '../decorators/pagination.decorator';
 import { OrderService } from '../services';
+import { IPagination } from '../types/pagnation';
 
-@Controller('orders')
+@ApiTags('Orders')
+@Controller('v1/orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get('/users/:address')
   async listOrderByUser(
     @Param('address') address: string,
-    @Query('page') page: number,
-    @Query('size') size: number,
+    @Pagination() pagination: IPagination,
   ) {
-    return await this.orderService.getByAddress(address, size, page);
+    const { limit, offset } = pagination;
+    return await this.orderService.getByAddress(address, limit, offset);
   }
 
-  @Get('/products/:product')
+  @Get('/products/:product_id')
   async listOrderByProduct(
     @Param('product_id') product_id: number,
-    @Query('status') product_status: number,
-    @Query('address') address: string,
-    @Query('page') page: number,
-    @Query('size') size: number,
+    @Pagination() pagination: IPagination,
+    @Query('status') product_status?: number,
+    @Query('address') address?: string,
   ) {
     return await this.orderService.getByProduct(
       product_id,
-      page,
-      size,
+      pagination.limit,
+      pagination.offset,
       address,
       product_status,
     );
   }
-
 }
