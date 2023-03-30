@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
+import { OrderDto } from '../models/order.dto';
+import { PageList } from '../models/page-list.dto';
 
 @Injectable()
 export class OrderService {
@@ -11,31 +14,33 @@ export class OrderService {
     productId: number,
     size: number,
     page: number,
+    address?: string,
     status?: number,
-  ) {
+  ): Promise<PageList<OrderDto[]>> {
     const { count, orders } = await OrdereRepository.findOrderByProduct(
       productId,
       size,
       page,
+      address,
       status,
     );
 
-    return {
-      count,
-      orders,
-    };
+    const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
+    return new PageList<OrderDto[]>(count, items);
   }
 
-  async getByAddress(address: string, size: number, page: number) {
+  async getByAddress(
+    address: string,
+    size: number,
+    page: number,
+  ): Promise<PageList<OrderDto[]>> {
     const { count, orders } = await OrdereRepository.findByAddress(
       address,
       size,
       page,
     );
 
-    return {
-      count,
-      orders,
-    };
+    const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
+    return new PageList<OrderDto[]>(count, items);
   }
 }

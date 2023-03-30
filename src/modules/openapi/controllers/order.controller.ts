@@ -5,7 +5,7 @@ import { OrderService } from '../services';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('users/:address')
+  @Get('/users/:address')
   async listOrderByUser(
     @Param('address') address: string,
     @Query('page') page: number,
@@ -18,6 +18,7 @@ export class OrderController {
   async listOrderByProduct(
     @Param('product_id') product_id: number,
     @Query('status') product_status: number,
+    @Query('address') address: string,
     @Query('page') page: number,
     @Query('size') size: number,
   ) {
@@ -25,7 +26,9 @@ export class OrderController {
       product_id,
       page,
       size,
+      address,
       product_status,
     );
   }
+
 }

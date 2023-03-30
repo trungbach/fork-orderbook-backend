@@ -23,13 +23,19 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     productId: number,
     size: number,
     page: number,
+    address?: string,
     status?: number,
   ) {
     let qb = this.createQueryBuilder('order');
 
     qb = qb
       .leftJoin('o_product', 'p', 'p.id = order.product_id')
+      .leftJoin('o_user', 'u', 'u.id = order.user_id')
       .where('p.id = product_id', { product_id: productId });
+
+    if (address) {
+      qb = qb.andWhere('u.address = :address', { address });
+    }
 
     if (status) {
       qb = qb.andWhere('order.status = :status', { status });
