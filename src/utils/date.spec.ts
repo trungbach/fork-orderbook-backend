@@ -37,9 +37,17 @@ test('test round down half day', () => {
   const expectResult = 1679961600; //2023-03-28 12:00:00PM
   expect(realResult).toEqual(expectResult);
 });
+
 // test round day
 test('test round down day', () => {
   const realResult = roundTime(new Date('2023-03-28 09:30:00'), 24 * 60);
+  const expectResult = 1679961600; //2023-03-28 00:00:00
+  expect(realResult).toEqual(expectResult);
+});
+
+// test round a week
+test('test round a week', () => {
+  const realResult = roundTime(new Date('2023-03-28T15:16:02.777942766Z'), 7 * 24 * 60 );
   const expectResult = 1679961600; //2023-03-28 00:00:00
   expect(realResult).toEqual(expectResult);
 });

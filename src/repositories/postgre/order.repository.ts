@@ -21,15 +21,20 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
 
   async findOrderByProduct(
     productId: number,
-    status: number,
     size: number,
     page: number,
+    status?: number,
   ) {
     let qb = this.createQueryBuilder('order');
 
     qb = qb
       .leftJoin('o_product', 'p', 'p.id = order.product_id')
       .where('p.id = product_id', { product_id: productId });
+
+    if (status) {
+      qb = qb.andWhere('order.status = :status', { status });
+    }
+
     const count = await qb.count();
     const orders = await qb
       .take(size)

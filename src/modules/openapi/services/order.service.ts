@@ -9,15 +9,15 @@ export class OrderService {
 
   async getByProduct(
     productId: number,
-    status: number,
     size: number,
     page: number,
+    status?: number,
   ) {
     const { count, orders } = await OrdereRepository.findOrderByProduct(
       productId,
-      status,
       size,
       page,
+      status,
     );
 
     return {

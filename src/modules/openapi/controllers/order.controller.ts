@@ -23,9 +23,9 @@ export class OrderController {
   ) {
     return await this.orderService.getByProduct(
       product_id,
-      product_status,
       page,
       size,
+      product_status,
     );
   }
 }
