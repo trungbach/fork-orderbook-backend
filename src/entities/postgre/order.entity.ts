@@ -32,9 +32,9 @@ export class Order {
   side: number;
 
   @Column({
-    type: 'timestamp',
+    type: 'bigint',
   })
-  time: Date;
+  time: number;
 
   @Column({
     type: 'int',
@@ -50,7 +50,7 @@ export class Order {
 
   @Column({
     type: 'int',
-    name: 'trade_sequence'
+    name: 'trade_sequence',
   })
   tradeSequence: number;
 
@@ -59,4 +59,24 @@ export class Order {
 
   @UpdatedAt()
   updated_at?: Date;
+
+  constructor(
+    productId: number,
+    userId: number,
+    price: number,
+    amount: number,
+    time: number,
+    tradeSequence: number,
+    side: number,
+    status: number,
+  ) {
+    this.productId = productId;
+    this.userId = userId;
+    this.price = price;
+    this.amount = amount;
+    this.time = time;
+    this.tradeSequence = tradeSequence;
+    this.side = side;
+    this.status = status;
+  }
 }

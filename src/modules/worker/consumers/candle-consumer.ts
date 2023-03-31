@@ -12,13 +12,13 @@ export class CandleConsumer {
 
   constructor() {} // inject logging service
 
-  @Process('order-event')
-  async handleTickJob(job: Job<Array<TradeEvent>>): Promise<void> {
+  @Process('candle-job')
+  async mainProcessCandle(job: Job<Array<TradeEvent>>): Promise<void> {
     const eventTick = job.data;
-    await this.handleOrderEvents(eventTick);
+    await this.handleCandleEvent(eventTick);
   }
 
-  private async handleOrderEvents(ticks: TradeEvent[]) {
+  private async handleCandleEvent(ticks: TradeEvent[]) {
     const candles: { [key: string]: Candle } = {};
 
     for (const tick of ticks) {

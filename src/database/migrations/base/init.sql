@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "o_order" (
   "price" decimal(32,16) NOT NULL,
   "amount" decimal(32,16) NOT NULL,
   "side" int NOT NULL,
-  "time" timestamp,
+  "time" bigint NOT NULL,
   "user_id" int NOT NULL,
   "status" int NOT NULL,
   "created_at" timestamp DEFAULT (now()),
