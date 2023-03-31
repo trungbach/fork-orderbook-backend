@@ -17,6 +17,7 @@ export class OrderConsumer {
   }
 
   private async handleOrderEvents(orders: OrderEvent[]) {
+    const listOrder = [];
     for (const order of orders) {
       const {
         productId,
@@ -55,8 +56,8 @@ export class OrderConsumer {
           status,
         );
       }
-
-      await OrdereRepository.save(_order);
+      listOrder.push(_order);
     }
+    await OrdereRepository.save(listOrder);
   }
 }

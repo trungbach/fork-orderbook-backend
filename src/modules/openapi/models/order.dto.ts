@@ -5,7 +5,7 @@ export class OrderDto {
   amount: number;
   side: number;
   status: number;
-  time: Date;
+  time: number;
 
   constructor(order: Order) {
     this.price = order.price;

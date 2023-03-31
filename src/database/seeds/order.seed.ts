@@ -1,5 +1,6 @@
 import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
+import * as momen from 'moment'
 
 const seeds: Order[] = [
   {
@@ -9,7 +10,7 @@ const seeds: Order[] = [
     userId: 1,
     amount: 100,
     side: 1,
-    time: new Date(),
+    time: momen(new Date()).unix(),
     status: 1,
     tradeSequence:1 ,
     
@@ -21,7 +22,7 @@ const seeds: Order[] = [
     userId: 1,
     amount: 100,
     side: 1,
-    time: new Date(),
+    time: momen().unix(),
     status: 2,
     tradeSequence: 2
   },
@@ -32,7 +33,7 @@ const seeds: Order[] = [
     userId: 1,
     amount: 100,
     side: 1,
-    time: new Date(),
+    time: momen().unix(),
     status: 2,
     tradeSequence:3
   },
