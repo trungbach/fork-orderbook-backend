@@ -6,7 +6,7 @@ interface OrderEvent {
   time: string; // is time of block
   tradeSequence: number; // is order_id field
   side: number; // is direction field
-  action: string;
+  action: string
 }
 
 export { OrderEvent };
