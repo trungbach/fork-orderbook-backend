@@ -48,6 +48,12 @@ export class Order {
   })
   status: number;
 
+  @Column({
+    type: 'int',
+    name: 'trade_sequence'
+  })
+  tradeSequence: number;
+
   @CreatedAt()
   created_at?: Date;
 

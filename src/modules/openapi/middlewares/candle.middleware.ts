@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NestMiddleware,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as moment from 'moment';
 
@@ -12,15 +17,15 @@ export class CandleMiddleware implements NestMiddleware {
     const endTime = +req.query['endTime'];
 
     if (!granularity || !startTime || !endTime) {
-      throw new ForbiddenException(null, 'Invalid request');
+      throw new BadRequestException('Invalid request');
     }
 
     if (!GRANULARITY_ARR.includes(granularity)) {
-      throw new ForbiddenException(null, 'Invalid request');
+      throw new BadRequestException('Invalid request');
     }
 
     if (!moment(startTime).isValid() || !moment(endTime).isValid()) {
-      throw new ForbiddenException(null, 'Invalid request');
+      throw new BadRequestException('Invalid request');
     }
 
     next();

@@ -1,14 +1,10 @@
-import { 
-  Entity,
-  PrimaryGeneratedColumn,
-  Column
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { CreatedAt, UpdatedAt } from './base';
 
 @Entity('o_product')
 export class Product {
   @PrimaryGeneratedColumn({
-    unsigned: true
+    unsigned: true,
   })
   id: number;
 
@@ -19,9 +15,15 @@ export class Product {
     type: 'decimal',
     precision: 8,
     scale: 5,
-    default: 0
+    default: 0,
   })
-  slippage: number
+  slippage: number;
+
+  @Column()
+  from: string;
+
+  @Column()
+  to: string;
 
   @CreatedAt()
   created_at?: Date;

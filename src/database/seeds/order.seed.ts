@@ -10,7 +10,8 @@ const seeds: Order[] = [
     amount: 100,
     side: 1,
     time: new Date(),
-    status: 1
+    status: 1,
+    tradeSequence:1 ,
     
   },
   {
@@ -21,7 +22,8 @@ const seeds: Order[] = [
     amount: 100,
     side: 1,
     time: new Date(),
-    status: 2
+    status: 2,
+    tradeSequence: 2
   },
   {
     id: 3,
@@ -31,7 +33,8 @@ const seeds: Order[] = [
     amount: 100,
     side: 1,
     time: new Date(),
-    status: 2
+    status: 2,
+    tradeSequence:3
   },
 ];
 

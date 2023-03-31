@@ -2,13 +2,17 @@ CREATE TABLE IF NOT EXISTS "o_product" (
   "id" SERIAL PRIMARY KEY,
   "symbol" varchar(20),
   "slippage" decimal(32,16),
+  "from" varchar(100) NOT NULL,
+  "to" varchar(100) NOT NULL,
   "created_at" timestamp DEFAULT (now()),
-  "updated_at" timestamp DEFAULT (now())
+  "updated_at" timestamp DEFAULT (now()),
+  UNIQUE ("from", "to")
 );
 
 CREATE TABLE IF NOT EXISTS "o_order" (
   "id" SERIAL PRIMARY KEY,
   "product_id" int NOT NULL,
+  "trade_sequence" int NOT NULL,
   "price" decimal(32,16) NOT NULL,
   "amount" decimal(32,16) NOT NULL,
   "side" int NOT NULL,
@@ -16,7 +20,8 @@ CREATE TABLE IF NOT EXISTS "o_order" (
   "user_id" int NOT NULL,
   "status" int NOT NULL,
   "created_at" timestamp DEFAULT (now()),
-  "updated_at" timestamp DEFAULT (now())
+  "updated_at" timestamp DEFAULT (now()),
+  UNIQUE ("trade_sequence")
 );
 
 CREATE TABLE IF NOT EXISTS "o_user" (
