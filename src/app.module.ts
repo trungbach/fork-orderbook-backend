@@ -17,6 +17,7 @@ let importModules = [
     redis: redisOption,
     prefix: 'ob_',
   }),
+  WorkerModule,
 ] as any[];
 
 if (config.isRunCmd) {
@@ -27,7 +28,6 @@ if (config.isRunCmd) {
   importModules = importModules.concat([
     ScheduleModule.forRoot(),
     ApiModule,
-    WorkerModule,
   ]);
 }
 

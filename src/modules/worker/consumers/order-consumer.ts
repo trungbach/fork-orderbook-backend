@@ -15,7 +15,6 @@ export class OrderConsumer {
 
   @Process('order-job')
   async mainProcessOrder(job: Job<OrderEvent[]>): Promise<void> {
-    console.log(111111111111, job.id, job.data);
     const orderEvents = job.data;
     await this.handleOrderEvents(orderEvents);
   }

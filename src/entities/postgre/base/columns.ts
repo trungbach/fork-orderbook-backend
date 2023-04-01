@@ -5,6 +5,7 @@ import {
 
 export const CreatedAt = (option = { select: true }) =>
   CreateDateColumn({
+    name: 'created_at',
     type: 'timestamp',
     nullable: true,
     precision: 0,
@@ -14,6 +15,7 @@ export const CreatedAt = (option = { select: true }) =>
 
 export const UpdatedAt = (option = { select: true }) =>
   UpdateDateColumn({
+    name: 'updated_at',
     type: 'timestamp',
     nullable: true,
     precision: 0,
