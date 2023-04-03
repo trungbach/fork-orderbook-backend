@@ -29,29 +29,22 @@
 # Scripts
 
 ## migration
-- `yarn typeorm migration:run`: run all migration file.
-- `yarn typeorm migration:revert`: Reverts last executed migration.
-- `yarn typeorm_nd migration:create src/database/migrations/EntityClass`: create file migration.
+- `npm run typeorm migration:run`: run all migration file.
+- `npm run typeorm migration:revert`: Reverts last executed migration.
+- `npm run typeorm_nd migration:create src/database/migrations/CreateTable-AlterTable`: create file migration.
 
 ## Seed database
 
 1. Create file src/database/seeds/custom.seed.ts
 1. Change file src/database/seeds/index.ts: add content `export * from './custom.seed'`;
 1. In file custom.seed.ts, create class CustomSeed, has function `run()`
-1. Run cmd:
-    1. `yarn build` (if develop is running yarn start:dev, not need build)
-    1. `yarn cmd seed --class=custom`
+1. Run cmd: `npm run cmd seed -- --class=custom`
 
-## Queue
+##  Development 
 
-1. Setting redis info (use lib bull nodejs)
-1. Add job to queue
-    ```
-        import { AppQueue } from 'src/provides/queue/app.queue';
-
-        const queueJob = new AppQueue('queuename');
-        queueJob.add(payload);
-    ```
+##### 1. Run crawl order
+Scan all block from RPC: `npm run cmd:prod scan-block` (build before run).  
+(if dev, can run: "npm run cmd scan-block", run file .ts, not need build)
 
 ## Docs feature
 [Docs feature view here](docs/)

@@ -1,14 +1,14 @@
 import { ConsoleLogger } from '@nestjs/common';
-import { logError, logInfo } from './';
+import { logErrorConsole, logInfoConsole } from './';
 
 export class LogService extends ConsoleLogger {
   error(message: any, ...optionalParams: [...any, string?, string?]) {
-    logError(message, ...optionalParams);
+    logErrorConsole(message, ...optionalParams);
     super.error(message, ...optionalParams);
   }
 
   debug(message: any, ...optionalParams: [...any, string?]) {
-    logInfo(message, ...optionalParams);
+    logInfoConsole(message, ...optionalParams);
     super.debug(message, ...optionalParams);
   }
 }

@@ -125,14 +125,6 @@ export class CrawlRpcService {
           } as TxsBasic,
         );
       }
-      // for (const message of messages) {
-      //   await this.nftEventJobService.processMessage(
-      //     message,
-      //     height,
-      //     forceCheckTxt,
-      //     time,
-      //   );
-      // }
     }
   }
 }

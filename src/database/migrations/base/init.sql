@@ -45,6 +45,14 @@ CREATE TABLE IF NOT EXISTS "o_candle" (
   UNIQUE ("product_id", "granularity", "time")
 );
 
+CREATE TABLE IF NOT EXISTS "o_txs" (
+  "hash" varchar(64) NOT NULL PRIMARY KEY,
+  "height" int4 NOT NULL,
+  "time" timestamp NOT NULL,
+  "data" text NULL,
+  "createdAt" timestamp NOT NULL DEFAULT now()
+);
+
 ALTER TABLE "o_order" ADD FOREIGN KEY ("product_id") REFERENCES "o_product" ("id");
 
 ALTER TABLE "o_candle" ADD FOREIGN KEY ("product_id") REFERENCES "o_product" ("id");

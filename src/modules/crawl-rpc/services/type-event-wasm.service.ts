@@ -50,7 +50,10 @@ export class TypeEventWasm {
               orderEvent = await this.orderSubmit(eventType.attributes);
               break;
             case ActionEnable.cancel:
-              orderEvent = await this.cancelSubmit(eventType.attributes);
+              orderEvent = await this.orderCancel(eventType.attributes);
+              break;
+            case ActionEnable.match:
+              orderEvent = await this.orderMatch(eventType.attributes);
               break;
             default:
               break;
@@ -63,6 +66,12 @@ export class TypeEventWasm {
     }
   }
 
+  /**
+   * event main: submit
+   *
+   * @param eventAttrs
+   * @returns
+   */
   private async orderSubmit(eventAttrs: AttributeEvent[]): Promise<OrderEvent> {
     const orderEvent = new OrderEvent();
     let tokenFrom: string;
@@ -121,7 +130,13 @@ export class TypeEventWasm {
     return orderEvent;
   }
 
-  private async cancelSubmit(eventAttrs: AttributeEvent[]) {
+  /**
+   * event main: cancel
+   *
+   * @param eventAttrs
+   * @returns
+   */
+  private async orderCancel(eventAttrs: AttributeEvent[]) {
     const orderEvent = new OrderEvent();
     // let tokenRefund: string;
     for (const attr of eventAttrs) {
@@ -147,6 +162,18 @@ export class TypeEventWasm {
     return orderEvent;
   }
 
+  /**
+   * event main: match
+   *
+   * @param eventAttrs
+   * @returns
+   */
+  private async orderMatch(eventAttrs: AttributeEvent[]) {
+    const orderEvent = new OrderEvent();
+    console.log('3333 order match', eventAttrs);
+    return orderEvent;
+  }
+
   private async orderEventSendToQueue(
     orderEvent: OrderEvent,
     txsData: TxsBasic,
@@ -159,6 +186,14 @@ export class TypeEventWasm {
     });
   }
 
+  /**
+   * find token pair in cache (var this.productPair)
+   *   exists -> get, not -> find db -> assign into cache
+   *
+   * @param from
+   * @param to
+   * @returns
+   */
   private async findProductId(from: string, to: string) {
     const strPair = `${from}-${to}`;
     if (this.productPair[strPair]) {
