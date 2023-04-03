@@ -15,7 +15,14 @@ const ActionEnable = {
 
 @Injectable()
 export class TypeEventWasm {
-  constructor(@InjectQueue('order-queue') private queueServ: Queue) {}
+  /**
+   * store product pair find in db -> save cache
+   */
+  private productPair: any;
+
+  constructor(@InjectQueue('order-queue') private queueServ: Queue) {
+    this.productPair = {};
+  }
 
   public async execEventOrderFromLog(log: string, txsData: TxsBasic) {
     let logsObj: any[];
@@ -37,16 +44,19 @@ export class TypeEventWasm {
           if (attributes.key !== 'action') {
             continue;
           }
+          let orderEvent: OrderEvent;
           switch (attributes.value) {
             case ActionEnable.submit:
-              const orderEvent = await this.orderSubmit(eventType.attributes);
-              await this.orderEventSendToQueue(orderEvent, txsData);
+              orderEvent = await this.orderSubmit(eventType.attributes);
               break;
             case ActionEnable.cancel:
-              await this.cancelSubmit(eventType.attributes);
+              orderEvent = await this.cancelSubmit(eventType.attributes);
               break;
             default:
               break;
+          }
+          if (orderEvent) {
+            await this.orderEventSendToQueue(orderEvent, txsData);
           }
         }
       }
@@ -103,29 +113,38 @@ export class TypeEventWasm {
     if (orderEvent.amount) {
       orderEvent.price = volume / orderEvent.amount;
     }
-    const productItem = await ProductRepository.findOne({
-      select: ['id'],
-      where: [
-        {
-          from: tokenFrom,
-          to: tokenTo,
-        },
-        {
-          from: tokenTo,
-          to: tokenFrom,
-        },
-      ],
-    });
-    if (!productItem) {
+    orderEvent.productId = await this.findProductId(tokenFrom, tokenTo);
+    if (!orderEvent.productId) {
       throw new Error(`Not found pair product ${tokenFrom} / ${tokenTo}`);
     }
-    orderEvent.productId = productItem.id;
     orderEvent.action = OrderAction.SUBMIT_ORDER;
     return orderEvent;
   }
 
-  private cancelSubmit(eventAttr: AttributeEvent[]) {
-    // console.log(2222222222222, eventAttr);
+  private async cancelSubmit(eventAttrs: AttributeEvent[]) {
+    const orderEvent = new OrderEvent();
+    // let tokenRefund: string;
+    for (const attr of eventAttrs) {
+      const val = attr.value.trim();
+      switch (attr.key) {
+        case 'order_id':
+          orderEvent.tradeSequence = Number(val);
+          break;
+        case 'bidder_refund':
+          const assetFrom = val.match(/^\d*/i);
+          if (assetFrom.length === 0) {
+            break;
+          }
+          orderEvent.amount = Number(assetFrom[0]);
+          // tokenRefund = val.split(/^\d*/i)[1];
+          break;
+        default:
+          // nothing
+          break;
+      }
+    }
+    orderEvent.action = OrderAction.CANCELLED;
+    return orderEvent;
   }
 
   private async orderEventSendToQueue(
@@ -138,5 +157,30 @@ export class TypeEventWasm {
       removeOnComplete: true,
       attempts: 3,
     });
+  }
+
+  private async findProductId(from: string, to: string) {
+    const strPair = `${from}-${to}`;
+    if (this.productPair[strPair]) {
+      return this.productPair[strPair];
+    }
+    const productItem = await ProductRepository.findOne({
+      select: ['id'],
+      where: [
+        {
+          from: from,
+          to: to,
+        },
+        {
+          from: to,
+          to: from,
+        },
+      ],
+    });
+    if (!productItem) {
+      return null;
+    }
+    this.productPair[strPair] = productItem.id;
+    return productItem.id;
   }
 }
