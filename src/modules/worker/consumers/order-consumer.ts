@@ -5,6 +5,7 @@ import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
 import * as moment from 'moment';
 import { OrderAction, OrderStatus } from 'src/utils/constant';
+import { logError } from 'src/utils/log-provider';
 
 @Processor('order-queue')
 export class OrderConsumer {
@@ -120,16 +121,21 @@ export class OrderConsumer {
 
   private async handleOrderEvents(orders: OrderEvent[]) {
     for (const order of orders) {
-      switch (order.action) {
-        case OrderAction.SUBMIT_ORDER:
-          await this.handleSubmitOrder(order);
-          break;
-        case OrderAction.EXECUTE_ORDER:
-          await this.handleExecuteOrder(order);
-          break;
-        case OrderAction.CANCELLED:
-          await this.handleCancelOrder(order);
-          break;
+      try {
+        switch (order.action) {
+          case OrderAction.SUBMIT_ORDER:
+            await this.handleSubmitOrder(order);
+            break;
+          case OrderAction.EXECUTE_ORDER:
+            await this.handleExecuteOrder(order);
+            break;
+          case OrderAction.CANCELLED:
+            await this.handleCancelOrder(order);
+            break;
+        }
+      } catch (err) {
+        logError(OrderConsumer.name, this.handleOrderEvents.name, err);
+        throw new Error('Some thing wrong!')
       }
     }
   }
