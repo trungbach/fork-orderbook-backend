@@ -4,12 +4,10 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { OrderController, UserController } from './controllers';
-import { CandleController } from './controllers/candle.controller';
+import { OrderController, UserController, CandleController } from './controllers';
 import { CandleMiddleware } from './middlewares/candle.middleware';
 import { PaginationMiddleware } from './middlewares/pagination.middleware';
-import { OrderService, UserService } from './services';
-import { CandleService } from './services/candle.service';
+import { OrderService, UserService, CandleService } from './services';
 
 @Module({
   controllers: [OrderController, UserController, CandleController],
