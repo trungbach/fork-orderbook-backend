@@ -21,11 +21,11 @@ export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(PaginationMiddleware).forRoutes(
       {
-        path: '/v1/orders/users*',
+        path: '/v1/orders/users/:address/*',
         method: RequestMethod.GET,
       },
       {
-        path: '/v1/orders/products*',
+        path: '/v1/orders/products/:product_id*',
         method: RequestMethod.GET,
       },
     );

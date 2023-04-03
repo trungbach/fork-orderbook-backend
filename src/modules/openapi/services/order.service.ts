@@ -42,4 +42,19 @@ export class OrderService {
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
     return new PageList<OrderDto[]>(count, items);
   }
+
+  async getRecentTraded(
+    product_id: number,
+    limit: number,
+    offset: number,
+  ): Promise<PageList<OrderDto[]>> {
+    const { count, orders } = await OrdereRepository.findRecentTraded(
+      product_id,
+      limit,
+      offset,
+    );
+
+    const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
+    return new PageList<OrderDto[]>(count, items);
+  }
 }

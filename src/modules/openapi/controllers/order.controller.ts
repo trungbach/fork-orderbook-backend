@@ -22,7 +22,7 @@ export class OrderController {
   async listOrderByProduct(
     @Param('product_id') product_id: number,
     @Pagination() pagination: IPagination,
-    @Query('status') product_status?: number,
+    @Query('status') status?: number,
     @Query('address') address?: string,
   ) {
     return await this.orderService.getByProduct(
@@ -30,7 +30,19 @@ export class OrderController {
       pagination.limit,
       pagination.offset,
       address,
-      product_status,
+      status,
     );
+  }
+
+  @Get('/products/:product_id/recent_trade')
+  async listOrderRecentTradedByProduct(
+    @Param('product_id') product_id: number,
+    @Pagination() pagination: IPagination,
+  ) {
+    return await this.orderService.getRecentTraded(
+        product_id, 
+        pagination.limit,
+        pagination.offset,
+    )
   }
 }

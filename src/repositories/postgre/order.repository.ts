@@ -1,3 +1,4 @@
+import { OrderStatus } from 'src/utils/constant';
 import PostgresDB from '../../config/postgres';
 import { Order } from '../../entities/postgre';
 
@@ -10,11 +11,7 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       .where('user.address = :address', { address });
 
     const count = await qb.getCount();
-    const orders = await qb
-      .limit(limit)
-      .offset(offset)
-      .select()
-      .getMany();
+    const orders = await qb.limit(limit).offset(offset).select().getMany();
 
     return { count, orders };
   },
@@ -33,7 +30,6 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       .leftJoin('o_user', 'u', 'u.id = order.user_id')
       .where('p.id = :product_id', { product_id: productId });
 
-    
     if (address) {
       qb = qb.andWhere('u.address = :address', { address });
     }
@@ -43,12 +39,23 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     }
 
     const count = await qb.getCount();
-    const orders = await qb
-      .limit(limit)
-      .offset(offset) 
-      .select()
-      .getMany();
-    
+    const orders = await qb.limit(limit).offset(offset).select().getMany();
+
+    return { count, orders };
+  },
+
+  async findRecentTraded(productId: number, limit: number, offset: number) {
+    let qb = this.createQueryBuilder('order');
+
+    qb = qb
+      .where('order.product_id = :product_id', { product_id: productId })
+      .andWhere('order.status = :status', {
+        status: OrderStatus.FULL_FILLED,
+      })
+      .orderBy('order.time', 'DESC');
+
+    const count = await qb.getCount();
+    const orders = await qb.limit(limit).offset(offset).select().getMany();
     return { count, orders };
   },
 });
