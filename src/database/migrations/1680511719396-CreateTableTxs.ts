@@ -28,7 +28,7 @@ export class CreateTableTxs1680511719396 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp',
             default: 'now()',
           },

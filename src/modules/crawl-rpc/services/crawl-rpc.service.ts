@@ -101,10 +101,9 @@ export class CrawlRpcService {
     const txsServ = new TxsFromBlocks(this.cosmosServ);
     const txsList = await txsServ.getTxs(
       // TODO
+      // 10938329,
       this.lastScanBlock - previousOffset,
       limit,
-      // 10938329,
-      // 100,
     );
     // Loop through each Blocks
     for (const item of txsList) {

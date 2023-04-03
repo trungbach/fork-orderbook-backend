@@ -4,7 +4,11 @@ import { Queue } from 'bull';
 import { logErrorConsole } from 'src/utils/log-provider';
 import { TxsBasic, AttributeEvent } from '../dtos';
 import { OrderEvent } from 'src/modules/worker/types';
-import { ProductRepository, UserRepository } from 'src/repositories/postgre';
+import {
+  ProductRepository,
+  UserRepository,
+  TxsRepository,
+} from 'src/repositories/postgre';
 import { OrderAction, OrderDirection } from 'src/utils/constant';
 
 const ActionEnable = {
@@ -184,6 +188,12 @@ export class TypeEventWasm {
       removeOnComplete: true,
       attempts: 3,
     });
+    // store txs (debug, current not use UI)
+    try {
+      this.storeTransaction(orderEvent, txsData);
+    } catch (err) {
+      logErrorConsole('Error store txs', err);
+    }
   }
 
   /**
@@ -217,5 +227,25 @@ export class TypeEventWasm {
     }
     this.productPair[strPair] = productItem.id;
     return productItem.id;
+  }
+
+  private async storeTransaction(orderEvent: OrderEvent, txsData: TxsBasic) {
+    const item = await TxsRepository.findOne({
+      select: ['hash'],
+      where: {
+        hash: txsData.hash,
+      },
+    });
+    if (item) {
+      return true;
+    }
+    await TxsRepository.save(
+      TxsRepository.create({
+        hash: txsData.hash,
+        height: txsData.height,
+        time: txsData.time,
+        data: JSON.stringify(orderEvent),
+      }),
+    );
   }
 }

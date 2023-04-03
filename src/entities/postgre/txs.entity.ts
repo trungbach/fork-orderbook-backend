@@ -4,7 +4,7 @@ import { CreatedAt } from './base';
 @Entity('o_txs')
 export class Txs {
   @PrimaryColumn()
-  hash: number;
+  hash: string;
 
   @Column()
   height: number;

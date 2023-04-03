@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS "o_txs" (
   "height" int4 NOT NULL,
   "time" timestamp NOT NULL,
   "data" text NULL,
-  "createdAt" timestamp NOT NULL DEFAULT now()
+  "created_at" timestamp NOT NULL DEFAULT now()
 );
 
 ALTER TABLE "o_order" ADD FOREIGN KEY ("product_id") REFERENCES "o_product" ("id");
