@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "o_order" (
   "status" int NOT NULL,
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp DEFAULT (now()),
-  UNIQUE ("product_id", "trade_sequence", "status")
+  UNIQUE ("trade_sequence", "status")
 );
 
 CREATE TABLE IF NOT EXISTS "o_user" (

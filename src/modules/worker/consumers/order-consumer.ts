@@ -38,7 +38,6 @@ export class OrderConsumer {
   private async handleCancelOrder(order: OrderEvent): Promise<void> {
     const _order = await OrdereRepository.findOne({
       where: {
-        productId: order.productId,
         tradeSequence: order.tradeSequence,
         status: OrderStatus.OPEN,
       },
