@@ -8,7 +8,8 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
 
     qb = qb
       .leftJoin('o_user', 'user', 'user.id = order.user_id')
-      .where('user.address = :address', { address });
+      .where('user.address = :address', { address })
+      .orderBy('order.time', 'DESC');
 
     const count = await qb.getCount();
     const orders = await qb.limit(limit).offset(offset).select().getMany();
@@ -28,7 +29,8 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     qb = qb
       .leftJoin('o_product', 'p', 'p.id = order.product_id')
       .leftJoin('o_user', 'u', 'u.id = order.user_id')
-      .where('p.id = :product_id', { product_id: productId });
+      .where('p.id = :product_id', { product_id: productId })
+      .orderBy('order.time', 'DESC');
 
     if (address) {
       qb = qb.andWhere('u.address = :address', { address });

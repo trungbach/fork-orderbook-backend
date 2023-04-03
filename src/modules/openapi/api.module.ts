@@ -19,7 +19,7 @@ export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(PaginationMiddleware).forRoutes(
       {
-        path: '/v1/orders/users/:address/*',
+        path: '/v1/orders/users/:address*',
         method: RequestMethod.GET,
       },
       {
