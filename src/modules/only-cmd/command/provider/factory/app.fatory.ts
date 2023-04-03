@@ -4,7 +4,7 @@ export default class AppSeedFactory {
   async run(nameSeedInput: string) {
     const factory = this.factory(nameSeedInput);
     if (!factory) {
-      console.log('Seed not found');
+      console.info('Seed not found');
       return;
     }
     return await factory.run();

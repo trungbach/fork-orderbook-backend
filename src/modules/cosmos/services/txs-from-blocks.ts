@@ -73,12 +73,12 @@ export class TxsFromBlocks {
           return items;
         })
         .catch((err) => {
-          console.log('error promise all', err);
+          logErrorConsole('error promise all', err);
         });
       this.txsResponse.promises = [];
     }
     if (this.txsResponse.txsError.length > 0) {
-      console.log('-----sleep retry ', retry);
+      console.info('-----sleep retry ', retry);
       await sleep(3000);
       return await this.getTxsRetry(
         start,
@@ -99,11 +99,11 @@ export class TxsFromBlocks {
         .then((res: any) => res.json())
         .then(async (obj) => {
           if (typeof obj?.result?.txs !== 'object') {
-            console.log('-+ txs get error block', obj);
+            console.error('-+ txs get error block', obj);
             this.txsResponse.txsError.push(height);
             return true;
           }
-          console.log('-+ txs get', height);
+          console.info('-+ txs get', height);
           if (obj.result.txs.length === 0) {
             return true;
           }

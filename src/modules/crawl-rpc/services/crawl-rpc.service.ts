@@ -66,7 +66,7 @@ export class CrawlRpcService {
 
   private async scanBlockRecursive() {
     const newBlock = (await this.cosmosServ.getLatestBlock()).header.height;
-    console.log(
+    console.info(
       this.textLogNote,
       moment().format('YYYY-MM-DD HH:mm:ss'),
       'lastBlockHeight',
@@ -87,12 +87,12 @@ export class CrawlRpcService {
 
     // scan to new block in blockchain -> sleep block time
     if (this.lastScanBlock === newBlock) {
-      console.log(this.textLogNote, 'Run Interval');
+      console.info(this.textLogNote, 'Run Interval');
       await sleep(7000);
       return this.scanBlockRecursive();
     }
     // scan not util to last block in blockchain -> sleep 1s
-    console.log(this.textLogNote, 'Run Immediate continue miss scan');
+    console.info(this.textLogNote, 'Run Immediate continue miss scan');
     await sleep(1500);
     return this.scanBlockRecursive();
   }
@@ -102,13 +102,18 @@ export class CrawlRpcService {
     const txsList = await txsServ.getTxs(
       // TODO
       this.lastScanBlock - previousOffset,
-      // 10924952,
       limit,
+      // 10938329,
+      // 100,
     );
     // Loop through each Blocks
     for (const item of txsList) {
       for (const txs of item.txs) {
-        if (!txs?.tx_result?.log) {
+        if (
+          typeof txs.tx_result !== 'object' ||
+          txs.tx_result.code !== 0 ||
+          !txs.tx_result.log
+        ) {
           continue;
         }
         await this.typeEventWasmServ.execEventOrderFromLog(

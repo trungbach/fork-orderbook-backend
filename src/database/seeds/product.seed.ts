@@ -17,7 +17,7 @@ export class ProductSeed {
       await this.insertProduct(item);
     }
 
-    console.log('Seed product success');
+    console.info('Seed product success');
   }
 
   async insertProduct(item: Product) {

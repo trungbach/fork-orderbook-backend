@@ -1,15 +1,9 @@
 import config from '../config';
 
 const sitesEnv = {
-  dev: [
-    'http://localhost:3000',
-    'https://oraidex.io',
-  ],
-  prod: [
-    'https://oraidex.io',
-  ]
+  dev: ['http://localhost:3000', 'https://oraidex.io'],
+  prod: ['https://oraidex.io'],
 };
-
 
 const CORS_SITE = {
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -19,7 +13,7 @@ const CORS_SITE = {
 let sites: string[] = [];
 
 if (config.CORS_ORIGINS) {
-  sites = config.CORS_ORIGINS.split(',')
+  sites = config.CORS_ORIGINS.split(',');
 }
 if (sites.length === 0) {
   if (config.isProd) {
@@ -30,10 +24,10 @@ if (sites.length === 0) {
 }
 CORS_SITE.origin = function (origin: string, callback: any) {
   if (!origin || sites.includes(origin)) {
-    callback(null, true)
+    callback(null, true);
   } else {
-    console.log('CORS', origin);
-    callback(new Error('Not allowed by CORS'))
+    console.error('CORS', origin);
+    callback(new Error('Not allowed by CORS'));
   }
 };
 export default CORS_SITE;

@@ -1,6 +1,6 @@
 import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
-import * as momen from 'moment'
+import * as momen from 'moment';
 
 const seeds: Order[] = [
   {
@@ -12,8 +12,7 @@ const seeds: Order[] = [
     side: 1,
     time: momen(new Date()).unix(),
     status: 1,
-    tradeSequence:1 ,
-    
+    tradeSequence: 1,
   },
   {
     id: 2,
@@ -24,7 +23,7 @@ const seeds: Order[] = [
     side: 1,
     time: momen().unix(),
     status: 2,
-    tradeSequence: 2
+    tradeSequence: 2,
   },
   {
     id: 3,
@@ -35,7 +34,7 @@ const seeds: Order[] = [
     side: 1,
     time: momen().unix(),
     status: 2,
-    tradeSequence:3
+    tradeSequence: 3,
   },
 ];
 
@@ -45,7 +44,7 @@ export class OrderSeed {
       await this.insertItem(item);
     }
 
-    console.log('Seed Order success');
+    console.info('Seed Order success');
   }
 
   async insertItem(item: Order) {

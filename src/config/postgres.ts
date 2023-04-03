@@ -1,4 +1,4 @@
-import { DataSource, DataSourceOptions } from "typeorm";
+import { DataSource, DataSourceOptions } from 'typeorm';
 import config from '.';
 
 const postgresConfig: DataSourceOptions = {
@@ -23,11 +23,11 @@ const PostgresDB = new DataSource(postgresConfig);
 
 PostgresDB.initialize()
   .then(() => {
-    console.log("Postgres has been initialized!")
+    console.info('Postgres has been initialized!');
   })
   .catch((err) => {
-    console.error("Error during Postgres initialization", err)
-  })
+    console.error('Error during Postgres initialization', err);
+  });
 
 export default PostgresDB;
-export {postgresConfig};
+export { postgresConfig };

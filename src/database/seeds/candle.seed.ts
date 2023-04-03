@@ -43,7 +43,7 @@ export class CandleSeed {
       await this.insertCandle(item);
     }
 
-    console.log('Seed candles success');
+    console.info('Seed candles success');
   }
 
   async insertCandle(item: Candle) {
@@ -55,7 +55,6 @@ export class CandleSeed {
 
     if (!itemDb) {
       const newItem = CandleRepository.create(item);
-      console.log('seed new candle', newItem);
       await CandleRepository.save(newItem);
     }
   }

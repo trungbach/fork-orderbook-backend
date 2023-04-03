@@ -22,7 +22,7 @@ export class UserSeed {
       await this.insertItem(item);
     }
 
-    console.log('Seed User success');
+    console.info('Seed User success');
   }
 
   async insertItem(item: User) {

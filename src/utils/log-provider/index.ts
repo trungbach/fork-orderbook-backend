@@ -4,8 +4,8 @@ import * as moment from 'moment';
 import config from '../../config';
 
 const folderLogs = `${config.basedir}logs/`;
-if (!fs.existsSync(folderLogs)){
-  console.log('CREATE FOLDER LOGS');
+if (!fs.existsSync(folderLogs)) {
+  console.info('CREATE FOLDER LOGS');
   fs.mkdirSync(folderLogs);
 }
 const logStdout = process.stdout;
@@ -19,7 +19,10 @@ function logFile(d, file) {
   for (const i in d) {
     logText += util.format(d[i]) + ' -- ';
   }
-  fs.appendFileSync(file, moment().format('YYYY-MM-DD HH:mm:ss') + ': ' + logText.slice(0, -4) + '\n');
+  fs.appendFileSync(
+    file,
+    moment().format('YYYY-MM-DD HH:mm:ss') + ': ' + logText.slice(0, -4) + '\n',
+  );
 }
 
 function openFile(fileName) {

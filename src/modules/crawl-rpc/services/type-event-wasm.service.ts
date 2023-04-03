@@ -61,16 +61,11 @@ export class TypeEventWasm {
     for (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
-        case 'ask_asset':
-          const assetFrom = val.split(' ');
-          if (assetFrom.length !== 2) {
-            break;
-          }
-          orderEvent.amount = Number(assetFrom[0]);
-          tokenFrom = assetFrom[1];
-          break;
         case 'bidder_addr':
           orderEvent.userId = await UserRepository.findOrCreate(val);
+          break;
+        case 'order_id':
+          orderEvent.tradeSequence = Number(val);
           break;
         case 'direction':
           orderEvent.side = OrderDirection[val];
@@ -81,24 +76,45 @@ export class TypeEventWasm {
             break;
           }
           volume = Number(assetTo[0]);
-          tokenTo = assetTo[1];
+          tokenTo = assetTo[1].toLowerCase();
           break;
-        case 'order_id':
-          orderEvent.tradeSequence = Number(val);
+        case 'ask_asset':
+          const assetFrom = val.split(' ');
+          if (assetFrom.length !== 2) {
+            break;
+          }
+          orderEvent.amount = Number(assetFrom[0]);
+          tokenFrom = assetFrom[1].toLowerCase();
           break;
         default:
+          // nothing
           break;
       }
+    }
+    /**
+     * buy token -> keep value
+     * sell token -> reverse amount, price, token from, to
+     */
+    if (orderEvent.side === OrderDirection.Sell) {
+      const volumAmount = orderEvent.amount;
+      orderEvent.amount = volume;
+      volume = volumAmount;
     }
     if (orderEvent.amount) {
       orderEvent.price = volume / orderEvent.amount;
     }
     const productItem = await ProductRepository.findOne({
       select: ['id'],
-      where: {
-        from: tokenFrom.toLowerCase(),
-        to: tokenTo.toLowerCase(),
-      },
+      where: [
+        {
+          from: tokenFrom,
+          to: tokenTo,
+        },
+        {
+          from: tokenTo,
+          to: tokenFrom,
+        },
+      ],
     });
     if (!productItem) {
       throw new Error(`Not found pair product ${tokenFrom} / ${tokenTo}`);
@@ -117,6 +133,7 @@ export class TypeEventWasm {
     txsData: TxsBasic,
   ) {
     orderEvent.time = txsData.time;
+    console.info('TXS job', orderEvent, txsData);
     await this.queueServ.add('order-job', [orderEvent], {
       removeOnComplete: true,
       attempts: 3,

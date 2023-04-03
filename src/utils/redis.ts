@@ -10,7 +10,7 @@ export class Redis {
     }
     Redis.instance[db] = createClient({ url: redisOption.url });
     Redis.instance[db].on('error', (err: any) =>
-      console.log('Redis Client Error', err),
+      console.error('Redis Client Error', err),
     );
     await Redis.instance[db].connect();
     return Redis.instance[db];

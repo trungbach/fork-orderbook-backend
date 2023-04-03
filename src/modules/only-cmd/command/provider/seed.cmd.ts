@@ -7,15 +7,13 @@ interface SeedCommandOptions {
 
 @Command({ name: 'seed', description: 'Seeder' })
 export class SeedCmd implements CommandRunner {
-  constructor() {}
-
   async run(
     passedParam: string[],
     options?: SeedCommandOptions,
   ): Promise<void> {
     const seedClass = options.class;
     if (!seedClass) {
-      console.log('Seed class null!');
+      console.info('Seed class null!');
       return;
     }
     const appSeeder = new AppSeedFactory();
