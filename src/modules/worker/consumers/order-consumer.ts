@@ -1,11 +1,11 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
-import { OrderEvent } from '../types';
+import { OrderEvent, TradeEvent } from '../types';
 import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
 import * as moment from 'moment';
 import { OrderAction, OrderStatus } from 'src/utils/constant';
-import { logError, logErrorConsole } from 'src/utils/log-provider';
+import { logErrorConsole } from 'src/utils/log-provider';
 
 @Processor('order-queue')
 export class OrderConsumer {
@@ -129,14 +129,12 @@ export class OrderConsumer {
       );
 
       await OrdereRepository.save([_order_1, _order_2]);
-      await this.candleQueue.add('candle-job', [
-        {
-          productId: _order_1.productId,
-          price: _order_1.price,
-          volume: _order_1.price * _order_1.amount,
-          time: order.time,
-        },
-      ]);
+      await this.sendToCandleQueue({
+        productId: `${_order_1.productId}`,
+        price: _order_1.price,
+        volume: _order_1.price * _order_1.amount,
+        time: order.time,
+      });
 
       return;
     }
@@ -145,16 +143,25 @@ export class OrderConsumer {
       _order.status = OrderStatus.FULL_FILLED;
 
       await OrdereRepository.save(_order);
-      await this.candleQueue.add('candle-job', [
-        {
-          productId: _order.productId,
-          price: _order.price,
-          volume: _order.price * _order.amount,
-          time: order.time,
-        },
-      ]);
+      await this.sendToCandleQueue({
+        productId: `${_order.productId}`,
+        price: _order.price,
+        volume: _order.price * _order.amount,
+        time: order.time,
+      });
 
       return;
     }
+  }
+
+  private async sendToCandleQueue(event: TradeEvent | TradeEvent[]) {
+    if (!Array.isArray(event)) {
+      event = [event];
+    }
+    await this.candleQueue.add('candle-job', event, {
+      removeOnComplete: true,
+      removeOnFail: false,
+      attempts: 3,
+    });
   }
 }

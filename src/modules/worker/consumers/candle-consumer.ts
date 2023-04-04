@@ -4,7 +4,7 @@ import { TradeEvent } from '../types';
 import { CandleRepository } from 'src/repositories/postgre';
 import { roundTime } from 'src/utils/date';
 import { Candle } from 'src/entities/postgre';
-import { min, max, add } from 'lodash';
+import { min, max, sum } from 'lodash';
 import { logErrorConsole } from 'src/utils/log-provider';
 import { OrderConsumer } from './order-consumer';
 
@@ -43,7 +43,7 @@ export class CandleConsumer {
           candle = await CandleRepository.findOne({
             where: {
               productId: +productId,
-              granularity,
+              granularity: +granularity,
               time: newTime,
             },
           });
@@ -61,9 +61,9 @@ export class CandleConsumer {
           candle.open = price;
         } else {
           candle.close = price;
-          candle.high = max([candle.high, price]);
-          candle.low = min([candle.low, price]);
-          candle.volume = add(candle.volume, volume);
+          candle.high = max([+candle.high, price]);
+          candle.low = min([+candle.low, price]);
+          candle.volume = sum([+candle.volume, volume]);
         }
 
         candles[candle_id] = candle;
