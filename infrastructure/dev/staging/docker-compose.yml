@@ -5,13 +5,15 @@ services:
     container_name: ob_redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379:6379
     env_file:
       - .env
     networks:
       - orderbook-network
 
   webserver:
-    image: oraichain/foundation-orderbook_explorer-stg:0.0.1
+    image: oraichain/foundation-orderbook_explorer-stg:0.0.2
     container_name: ob_api-stg
     command: node /app/dist/main.js
     env_file:
@@ -23,9 +25,9 @@ services:
     networks:
       - orderbook-network
   commander:
-    image: oraichain/foundation-orderbook_explorer-stg:0.0.1
+    image: oraichain/foundation-orderbook_explorer-stg:0.0.2
     container_name: ob_cmd-stg
-    command: node /app/dist/commander.js
+    command: node /app/dist/commander.js scan-block
     environment:
       - RUN_CMD=1 
     env_file:
