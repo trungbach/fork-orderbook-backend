@@ -1,5 +1,32 @@
-require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` });
+import { config as dotenvLib } from 'dotenv';
+import * as fs from 'fs';
+const baseDir = __dirname + '/../../';
 
+/**
+ * find .env file: .env.prod, not eixsts -> .env
+ */
+const getPathEnv = () => {
+  if (fs.existsSync(`.env.${process.env.NODE_ENV}`)) {
+    return `.env.${process.env.NODE_ENV}`;
+  }
+  if (fs.existsSync(baseDir + `.env.${process.env.NODE_ENV}`)) {
+    return baseDir + `.env.${process.env.NODE_ENV}`;
+  }
+  if (fs.existsSync('.env')) {
+    return '.env';
+  }
+  if (fs.existsSync(baseDir + '.env')) {
+    return baseDir + '.env';
+  }
+  return null;
+};
+const configDotenv: any = {
+  path: getPathEnv(),
+};
+dotenvLib(configDotenv);
+if (configDotenv.path) {
+  console.info('+_+ =_= ----- Load file env', configDotenv.path);
+}
 const appEnv = process.env.APP_ENV?.toLowerCase();
 
 const configDefault = {

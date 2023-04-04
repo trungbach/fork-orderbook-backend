@@ -26,8 +26,15 @@ export class CrawlRpcService {
    */
   public async runMain() {
     this.redis = await Redis.getInstance();
+    this.initData();
     await this.getLastScanBlock();
     await this.scanBlock();
+  }
+
+  private initData() {
+    if (config.SCAN_BLOCK_MAX_LIMIT) {
+      this.maxLimit = Number(config.SCAN_BLOCK_MAX_LIMIT);
+    }
   }
 
   private async getLastScanBlock(): Promise<void> {
@@ -101,7 +108,8 @@ export class CrawlRpcService {
     const txsServ = new TxsFromBlocks(this.cosmosServ);
     const txsList = await txsServ.getTxs(
       // TODO
-      // 10938329,
+      // 10938329, // submit + cancel
+      // 10996041, // execute
       this.lastScanBlock - previousOffset,
       limit,
     );

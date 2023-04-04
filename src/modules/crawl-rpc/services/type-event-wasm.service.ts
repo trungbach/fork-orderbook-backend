@@ -14,7 +14,7 @@ import { OrderAction, OrderDirection } from 'src/utils/constant';
 const ActionEnable = {
   submit: 'submit_order',
   cancel: 'cancel_order',
-  match: 'match_order',
+  match: 'execute_orderbook_pair',
 };
 
 @Injectable()
@@ -36,28 +36,34 @@ export class TypeEventWasm {
       logErrorConsole('error parse json log tx', err);
       return false;
     }
-    for (const itemLog of logsObj) {
+    for await (const itemLog of logsObj) {
       if (!itemLog.events || itemLog.events.length === 0) {
         continue;
       }
-      for (const eventType of itemLog.events) {
+      for await (const eventType of itemLog.events) {
         if (eventType.type !== 'wasm' || eventType.attributes?.length === 0) {
           continue;
         }
-        for (const attributes of eventType.attributes) {
+        for await (const attributes of eventType.attributes) {
           if (attributes.key !== 'action') {
             continue;
           }
-          let orderEvent: OrderEvent;
+          let orderEvent: OrderEvent | OrderEvent[];
           switch (attributes.value) {
             case ActionEnable.submit:
-              orderEvent = await this.orderSubmit(eventType.attributes);
+              orderEvent = await this.orderSubmit(
+                eventType.attributes,
+                txsData,
+              );
               break;
             case ActionEnable.cancel:
-              orderEvent = await this.orderCancel(eventType.attributes);
+              orderEvent = await this.orderCancel(
+                eventType.attributes,
+                txsData,
+              );
               break;
             case ActionEnable.match:
-              orderEvent = await this.orderMatch(eventType.attributes);
+              orderEvent = await this.orderMatch(eventType.attributes, txsData);
               break;
             default:
               break;
@@ -76,12 +82,15 @@ export class TypeEventWasm {
    * @param eventAttrs
    * @returns
    */
-  private async orderSubmit(eventAttrs: AttributeEvent[]): Promise<OrderEvent> {
+  private async orderSubmit(
+    eventAttrs: AttributeEvent[],
+    txsData: TxsBasic,
+  ): Promise<OrderEvent> {
     const orderEvent = new OrderEvent();
     let tokenFrom: string;
     let tokenTo: string;
     let volume = 0;
-    for (const attr of eventAttrs) {
+    for await (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
         case 'bidder_addr':
@@ -131,6 +140,7 @@ export class TypeEventWasm {
       throw new Error(`Not found pair product ${tokenFrom} / ${tokenTo}`);
     }
     orderEvent.action = OrderAction.SUBMIT_ORDER;
+    orderEvent.time = txsData.time;
     return orderEvent;
   }
 
@@ -140,9 +150,11 @@ export class TypeEventWasm {
    * @param eventAttrs
    * @returns
    */
-  private async orderCancel(eventAttrs: AttributeEvent[]) {
+  private async orderCancel(
+    eventAttrs: AttributeEvent[],
+    txsData: TxsBasic,
+  ): Promise<OrderEvent> {
     const orderEvent = new OrderEvent();
-    // let tokenRefund: string;
     for (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
@@ -155,7 +167,6 @@ export class TypeEventWasm {
             break;
           }
           orderEvent.amount = Number(assetFrom[0]);
-          // tokenRefund = val.split(/^\d*/i)[1];
           break;
         default:
           // nothing
@@ -163,6 +174,7 @@ export class TypeEventWasm {
       }
     }
     orderEvent.action = OrderAction.CANCELLED;
+    orderEvent.time = txsData.time;
     return orderEvent;
   }
 
@@ -172,19 +184,100 @@ export class TypeEventWasm {
    * @param eventAttrs
    * @returns
    */
-  private async orderMatch(eventAttrs: AttributeEvent[]) {
+  private async orderMatch(eventAttrs: AttributeEvent[], txsData: TxsBasic) {
+    let valMathedLists: string;
+    for (const attr of eventAttrs) {
+      const val = attr.value.trim();
+      if (attr.key === 'list_order_matched') {
+        valMathedLists = val;
+        break;
+      }
+    }
+    if (!valMathedLists) {
+      return null;
+    }
+    valMathedLists = valMathedLists
+      .replace(/Attribute\s/g, '')
+      .replace(/key(\s)*\:/g, '"key":')
+      .replace(/value(\s)*\:/g, '"value":');
+    let attrsEvents: AttributeEvent[][];
+    try {
+      attrsEvents = JSON.parse(valMathedLists);
+    } catch (err) {
+      logErrorConsole(
+        'ERROR parse json execute_orderbook_pair',
+        err,
+        valMathedLists,
+      );
+      return null;
+    }
+    const orderEvents: OrderEvent[] = [];
+    for await (const item of attrsEvents) {
+      const orderEvent = await this.orderMatched(item);
+      orderEvent.time = txsData.time;
+      orderEvents.push(orderEvent);
+    }
+    return orderEvents;
+  }
+
+  /**
+   * event main: cancel
+   *
+   * @param eventAttrs
+   * @returns
+   */
+  private async orderMatched(eventAttrs: AttributeEvent[]) {
     const orderEvent = new OrderEvent();
-    console.log('3333 order match', eventAttrs);
+    let volume: number;
+    for await (const attr of eventAttrs) {
+      const val = attr.value.trim();
+      switch (attr.key) {
+        case 'bidder_addr':
+          orderEvent.userId = await UserRepository.findOrCreate(val);
+          break;
+        case 'order_id':
+          orderEvent.tradeSequence = Number(val);
+          break;
+        case 'direction':
+          orderEvent.side = OrderDirection[val];
+          break;
+        case 'filled_offer_amount':
+          volume = Number(val);
+          break;
+        case 'filled_ask_amount':
+          orderEvent.amount = Number(val);
+          break;
+        default:
+          // nothing
+          break;
+      }
+    }
+
+    /**
+     * buy token -> keep value
+     * sell token -> reverse amount, price, token from, to
+     */
+    if (orderEvent.side === OrderDirection.Sell) {
+      const volumAmount = orderEvent.amount;
+      orderEvent.amount = volume;
+      volume = volumAmount;
+    }
+    if (orderEvent.amount) {
+      orderEvent.price = volume / orderEvent.amount;
+    }
+    orderEvent.action = OrderAction.EXECUTE_ORDER;
     return orderEvent;
   }
 
   private async orderEventSendToQueue(
-    orderEvent: OrderEvent,
+    orderEvent: OrderEvent | OrderEvent[],
     txsData: TxsBasic,
   ) {
-    orderEvent.time = txsData.time;
+    if (!Array.isArray(orderEvent)) {
+      orderEvent = [orderEvent];
+    }
     console.info('TXS job', orderEvent, txsData);
-    await this.queueServ.add('order-job', [orderEvent], {
+    await this.queueServ.add('order-job', orderEvent, {
       removeOnComplete: true,
       attempts: 3,
     });
@@ -229,7 +322,10 @@ export class TypeEventWasm {
     return productItem.id;
   }
 
-  private async storeTransaction(orderEvent: OrderEvent, txsData: TxsBasic) {
+  private async storeTransaction(
+    orderEvent: OrderEvent | OrderEvent[],
+    txsData: TxsBasic,
+  ) {
     const item = await TxsRepository.findOne({
       select: ['hash'],
       where: {
