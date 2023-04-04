@@ -20,9 +20,10 @@ CREATE TABLE IF NOT EXISTS "o_order" (
   "user_id" int NOT NULL,
   "status" int NOT NULL,
   "created_at" timestamp DEFAULT (now()),
-  "updated_at" timestamp DEFAULT (now()),
-  UNIQUE ("trade_sequence", "status")
+  "updated_at" timestamp DEFAULT (now())
 );
+
+CREATE INDEX idx_trade_sequence_status ON "o_order"("trade_sequence", "status");
 
 CREATE TABLE IF NOT EXISTS "o_user" (
   "id" SERIAL PRIMARY KEY,

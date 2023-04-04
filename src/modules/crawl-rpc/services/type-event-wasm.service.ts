@@ -36,15 +36,15 @@ export class TypeEventWasm {
       logErrorConsole('error parse json log tx', err);
       return false;
     }
-    for await (const itemLog of logsObj) {
+    for (const itemLog of logsObj) {
       if (!itemLog.events || itemLog.events.length === 0) {
         continue;
       }
-      for await (const eventType of itemLog.events) {
+      for (const eventType of itemLog.events) {
         if (eventType.type !== 'wasm' || eventType.attributes?.length === 0) {
           continue;
         }
-        for await (const attributes of eventType.attributes) {
+        for (const attributes of eventType.attributes) {
           if (attributes.key !== 'action') {
             continue;
           }
@@ -64,6 +64,7 @@ export class TypeEventWasm {
               break;
             case ActionEnable.match:
               orderEvent = await this.orderMatch(eventType.attributes, txsData);
+
               break;
             default:
               break;
@@ -90,7 +91,7 @@ export class TypeEventWasm {
     let tokenFrom: string;
     let tokenTo: string;
     let volume = 0;
-    for await (const attr of eventAttrs) {
+    for (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
         case 'bidder_addr':
@@ -194,7 +195,7 @@ export class TypeEventWasm {
       }
     }
     if (!valMathedLists) {
-      return null;
+      return [];
     }
     valMathedLists = valMathedLists
       .replace(/Attribute\s/g, '')
@@ -209,10 +210,10 @@ export class TypeEventWasm {
         err,
         valMathedLists,
       );
-      return null;
+      return [];
     }
     const orderEvents: OrderEvent[] = [];
-    for await (const item of attrsEvents) {
+    for (const item of attrsEvents) {
       const orderEvent = await this.orderMatched(item);
       orderEvent.time = txsData.time;
       orderEvents.push(orderEvent);
@@ -229,7 +230,7 @@ export class TypeEventWasm {
   private async orderMatched(eventAttrs: AttributeEvent[]) {
     const orderEvent = new OrderEvent();
     let volume: number;
-    for await (const attr of eventAttrs) {
+    for (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
         case 'bidder_addr':
@@ -298,7 +299,7 @@ export class TypeEventWasm {
    * @returns
    */
   private async findProductId(from: string, to: string) {
-    const strPair = `${from}-${to}`;
+    const strPair = `${from} - ${to}`;
     if (this.productPair[strPair]) {
       return this.productPair[strPair];
     }
@@ -343,5 +344,5 @@ export class TypeEventWasm {
         data: JSON.stringify(orderEvent),
       }),
     );
-  }
+  } 
 }

@@ -5,17 +5,26 @@ import { CandleRepository } from 'src/repositories/postgre';
 import { roundTime } from 'src/utils/date';
 import { Candle } from 'src/entities/postgre';
 import { min, max, add } from 'lodash';
+import { logErrorConsole } from 'src/utils/log-provider';
+import { OrderConsumer } from './order-consumer';
 
 @Processor('order-queue')
 export class CandleConsumer {
   private GRANULARITY_ARR = [1, 5, 15, 30, 60, 360, 1440];
 
-  constructor() {} // inject logging service
+  constructor() {
+    // inject logging service
+  }
 
   @Process('candle-job')
   async mainProcessCandle(job: Job<Array<TradeEvent>>): Promise<void> {
     const eventTick = job.data;
-    await this.handleCandleEvent(eventTick);
+    try {
+      await this.handleCandleEvent(eventTick);
+    } catch (err) {
+      logErrorConsole(OrderConsumer.name, this.mainProcessCandle.name, err);
+      throw new Error(err);
+    }
   }
 
   private async handleCandleEvent(ticks: TradeEvent[]) {
@@ -41,6 +50,7 @@ export class CandleConsumer {
         }
 
         if (!candle) {
+          candle = new Candle();
           candle.granularity = granularity;
           candle.productId = +productId;
           candle.time = newTime;
@@ -71,6 +81,13 @@ export class CandleConsumer {
       return value;
     });
 
-    await CandleRepository.save(newCandles);
+    await CandleRepository.upsert(newCandles, [
+      'productId',
+      'granularity',
+      'time',
+    ]);
   }
 }
+
+//1680595740
+//1680595800
