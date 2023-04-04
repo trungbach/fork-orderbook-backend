@@ -1,6 +1,6 @@
-VERSION=1.0.0-dev
-IMAGE_TAG=ABCD
-IMAGE_REPOSITORY=ABCDE
+VERSION=0.0.1
+IMAGE_TAG=1
+IMAGE_REPOSITORY=1
 
 for COMMAND in "$@"
 do
@@ -8,13 +8,17 @@ do
         in
         "prod")
             VERSION=0.0.1
-            IMAGE_TAG=devorai/orderbook
+            IMAGE_TAG=oraichain/foundation-orderbook_explorer
             IMAGE_REPOSITORY=$IMAGE_TAG:$VERSION
+            echo BUILD IMAGE: $IMAGE_REPOSITORY
+            docker build --no-cache -f ./Dockerfile -t $IMAGE_REPOSITORY ../
         ;;
         "staging")
-            VERSION=0.0.4
-            IMAGE_TAG=devorai/fd-orderbook-explorer-stg
+            VERSION=0.0.1
+            IMAGE_TAG=oraichain/foundation-orderbook_explorer-stg
             IMAGE_REPOSITORY=$IMAGE_TAG:$VERSION
+            echo BUILD IMAGE: $IMAGE_REPOSITORY
+            docker build --no-cache -f ./Dockerfile -t $IMAGE_REPOSITORY ../
         ;;
         "push")
             docker push $IMAGE_REPOSITORY

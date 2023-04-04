@@ -33,3 +33,5 @@
 **/*.env
 *-db
 .scannerwork
+.env.stg
+.env.prod

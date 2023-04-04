@@ -1,22 +1,44 @@
-version: '3.3'
+version: '3.7'
 services:
-  orderbook-explorer-stg:
-    build:
-      context: ../../../
-      dockerfile: ./infrastructure/Dockerfile
-    image: devorai/fd-orderbook-explorer-stg:0.0.1
-    container_name: orderbook-explorer-stg
+  redis:
+    image: bitnami/redis
+    container_name: ob_redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     env_file:
-      - ./.env
-    restart: always
+      - .env
+    networks:
+      - orderbook-network
+
+  webserver:
+    image: oraichain/foundation-orderbook_explorer-stg:0.0.1
+    container_name: ob_api-stg
+    command: node /app/dist/main.js
+    env_file:
+      - .env
     logging:
       driver: "json-file"
       options:
         max-size: "50m"
     networks:
-      - orai-network
+      - orderbook-network
+  commander:
+    image: oraichain/foundation-orderbook_explorer-stg:0.0.1
+    container_name: ob_cmd-stg
+    command: node /app/dist/commander.js
+    environment:
+      - RUN_CMD=1 
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    networks:
+      - orderbook-network
 
 networks:
-  orai-network:
-    external: false
-    name: orai-network
+  orderbook-network:
+    driver: bridge
+    external: true
+    name: orderbook-network

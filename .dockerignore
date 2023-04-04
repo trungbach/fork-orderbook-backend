@@ -74,9 +74,6 @@ dist
 *-db/
 
 
-package-lock.json
-
-
 README.md
 
 infrastructure

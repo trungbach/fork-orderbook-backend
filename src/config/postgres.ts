@@ -17,6 +17,14 @@ const postgresConfig: DataSourceOptions = {
   migrations: [__dirname + '/../database/migrations/*.{ts,js}'],
   logger: 'file',
   logging: config.DATABASE_LOGGING === 'true' ? true : false,
+  ...(config.DATABASE_SSL && {
+    ssl: true,
+    extra: {
+        ssl: {
+            rejectUnauthorized: false,
+        },
+    },
+})
 };
 
 const PostgresDB = new DataSource(postgresConfig);
