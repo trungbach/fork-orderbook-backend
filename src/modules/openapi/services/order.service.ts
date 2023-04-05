@@ -17,7 +17,7 @@ export class OrderService {
     address?: string,
     status?: number,
   ): Promise<PageList<OrderDto[]>> {
-    const { count, orders } = await OrdereRepository.findOrderByProduct(
+    const  orders = await OrdereRepository.findOrderByProduct(
       productId,
       limit,
       offset,
@@ -26,7 +26,7 @@ export class OrderService {
     );
 
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<OrderDto[]>(count, items);
+    return new PageList<OrderDto[]>(items);
   }
 
   async getByAddress(
@@ -34,13 +34,13 @@ export class OrderService {
     limit: number,
     offset: number,
   ): Promise<PageList<OrderDto[]>> {
-    const { count, orders } = await OrdereRepository.findByAddress(
+    const orders = await OrdereRepository.findByAddress(
       address,
       limit,
       offset,
     );
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<OrderDto[]>(count, items);
+    return new PageList<OrderDto[]>(items);
   }
 
   async getRecentTraded(
@@ -48,13 +48,13 @@ export class OrderService {
     limit: number,
     offset: number,
   ): Promise<PageList<OrderDto[]>> {
-    const { count, orders } = await OrdereRepository.findRecentTraded(
+    const orders = await OrdereRepository.findRecentTraded(
       product_id,
       limit,
       offset,
     );
 
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<OrderDto[]>(count, items);
+    return new PageList<OrderDto[]>(items);
   }
 }

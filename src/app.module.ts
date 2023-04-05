@@ -21,13 +21,12 @@ let importModules = [
 
 if (config.isRunCmd) {
   // run command line
-  importModules = importModules.concat([CommandModule]);
+  importModules = importModules.concat([CommandModule, WorkerModule]);
 } else {
   // run web
   importModules = importModules.concat([
     ScheduleModule.forRoot(),
     ApiModule,
-    WorkerModule,
   ]);
 }
 

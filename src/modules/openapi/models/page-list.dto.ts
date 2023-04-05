@@ -1,9 +1,7 @@
 export class PageList<T> {
-  count: number;
   items: T;
 
-  constructor(count: number, items: T) {
-    this.count = count;
+  constructor(items: T) {
     this.items = items;
   }
 }

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CandleService } from '../services/candle.service';
 
 @ApiTags('Candles')
@@ -7,6 +7,12 @@ import { CandleService } from '../services/candle.service';
 export class CandleController {
   constructor(private readonly candleService: CandleService) {}
 
+  @ApiParam({
+    name: 'product_id',
+    required: true,
+    description: 'query by product id',
+    type: Number
+  })
   @Get('/:product_id')
   async listCandleByGranularity(
     @Param('product_id') product_id: number,

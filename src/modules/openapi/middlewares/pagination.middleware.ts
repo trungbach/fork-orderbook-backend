@@ -1,14 +1,15 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { convertPageToOffset } from '../utils/convert-pagination';
 import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class PaginationMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const page = +req?.query?.page || 1;
-    const size = +req?.query?.size || 10;
+    let limit = +req?.query?.limit || 30;
+    const offset = +req?.query?.offset || 0;
 
-    const [limit, offset] = convertPageToOffset(page, size);
+    if (limit < 0 || limit > 50) {
+      limit = 50;
+    }
 
     const pagination: any = {};
 

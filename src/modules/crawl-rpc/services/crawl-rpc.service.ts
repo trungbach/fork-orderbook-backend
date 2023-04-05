@@ -82,7 +82,7 @@ export class CrawlRpcService {
       this.lastScanBlock,
     );
 
-    const previousOffset = 1; //rescan number block
+    const previousOffset = 0; //rescan number block
     const offset = newBlock - this.lastScanBlock;
     if (offset > 0) {
       const step = Math.min(this.maxLimit, offset);

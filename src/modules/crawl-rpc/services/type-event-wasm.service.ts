@@ -10,6 +10,7 @@ import {
   TxsRepository,
 } from 'src/repositories/postgre';
 import { OrderAction, OrderDirection } from 'src/utils/constant';
+import { ILike } from 'typeorm';
 
 const ActionEnable = {
   submit: 'submit_order',
@@ -315,12 +316,12 @@ export class TypeEventWasm {
       select: ['id'],
       where: [
         {
-          from: from,
-          to: to,
+          from: ILike(from),
+          to: ILike(to),
         },
         {
-          from: to,
-          to: from,
+          from: ILike(to),
+          to: ILike(from),
         },
       ],
     });

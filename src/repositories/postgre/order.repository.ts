@@ -11,10 +11,9 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       .where('user.address = :address', { address })
       .orderBy('order.time', 'DESC');
 
-    const count = await qb.getCount();
     const orders = await qb.limit(limit).offset(offset).select().getMany();
 
-    return { count, orders };
+    return orders;
   },
 
   async findOrderByProduct(
@@ -40,10 +39,8 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       qb = qb.andWhere('order.status = :status', { status });
     }
 
-    const count = await qb.getCount();
     const orders = await qb.limit(limit).offset(offset).select().getMany();
-
-    return { count, orders };
+    return orders;
   },
 
   async findRecentTraded(productId: number, limit: number, offset: number) {
@@ -56,9 +53,8 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       })
       .orderBy('order.time', 'DESC');
 
-    const count = await qb.getCount();
     const orders = await qb.limit(limit).offset(offset).select().getMany();
-    return { count, orders };
+    return orders;
   },
 
   async sumOfAmountOrder(tradeSequence: number, status: number) {
