@@ -120,7 +120,7 @@ export class OrderConsumer {
         intTime,
         tradeSequence,
         side,
-        OrderStatus.FULL_FILLED,
+        fullFill > 0 ? OrderStatus.FULL_FILLED : OrderStatus.CLOSE,
       );
       const newOpenOrder = new Order(
         rootOrder.productId,
@@ -157,18 +157,8 @@ export class OrderConsumer {
         side,
         OrderStatus.CLOSE,
       );
-      const fullFillOrder = new Order(
-        rootOrder.productId,
-        userId,
-        price,
-        amount,
-        intTime,
-        tradeSequence,
-        side,
-        OrderStatus.FULL_FILLED,
-      );
 
-      await OrdereRepository.save([closeOrder, fullFillOrder]);
+      await OrdereRepository.save([closeOrder]);
       await this.sendToCandleQueue({
         productId: `${rootOrder.productId}`,
         price: price,

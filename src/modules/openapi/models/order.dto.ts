@@ -1,6 +1,7 @@
-import { Order } from "src/entities/postgre";
+import { Order } from 'src/entities/postgre';
 
 export class OrderDto {
+  id: number;
   price: number;
   amount: number;
   side: number;
@@ -8,6 +9,7 @@ export class OrderDto {
   time: number;
 
   constructor(order: Order) {
+    this.id = order.id;
     this.price = +order.price;
     this.amount = +order.amount;
     this.side = +order.side;
