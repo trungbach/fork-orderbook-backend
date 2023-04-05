@@ -6,6 +6,7 @@ import { CosmosService, TxsFromBlocks } from 'src/modules/cosmos/services';
 import { logErrorConsole } from 'src/utils/log-provider';
 import { TypeEventWasm } from './type-event-wasm.service';
 import { TxsBasic } from '../dtos';
+import { sortBy } from 'lodash';
 
 const REDIS_KEY_LAST_BLOCK = 'last_scan_block';
 
@@ -106,13 +107,18 @@ export class CrawlRpcService {
 
   private async processTxt(limit: number, previousOffset: number) {
     const txsServ = new TxsFromBlocks(this.cosmosServ);
-    const txsList = await txsServ.getTxs(
+    let txsList = await txsServ.getTxs(
       // TODO
       // 10938329, // submit + cancel
       // 10996041, // execute
       this.lastScanBlock - previousOffset,
       limit,
     );
+    txsList = sortBy(txsList, [
+      function (o) {
+        return o.time;
+      },
+    ]);
     // Loop through each Blocks
     for (const item of txsList) {
       for (const txs of item.txs) {

@@ -64,7 +64,6 @@ export class TypeEventWasm {
               break;
             case ActionEnable.match:
               orderEvent = await this.orderMatch(eventType.attributes, txsData);
-
               break;
             default:
               break;
@@ -214,7 +213,7 @@ export class TypeEventWasm {
     }
     const orderEvents: OrderEvent[] = [];
     for (const item of attrsEvents) {
-      const orderEvent = await this.orderMatched(item);
+      const orderEvent = await this.orderItemMatched(item);
       orderEvent.time = txsData.time;
       orderEvents.push(orderEvent);
     }
@@ -227,7 +226,7 @@ export class TypeEventWasm {
    * @param eventAttrs
    * @returns
    */
-  private async orderMatched(eventAttrs: AttributeEvent[]) {
+  private async orderItemMatched(eventAttrs: AttributeEvent[]) {
     const orderEvent = new OrderEvent();
     let volume: number;
     for (const attr of eventAttrs) {
@@ -274,7 +273,14 @@ export class TypeEventWasm {
     orderEvent: OrderEvent | OrderEvent[],
     txsData: TxsBasic,
   ) {
-    if (!Array.isArray(orderEvent)) {
+    if (Array.isArray(orderEvent)) {
+      if (orderEvent.length === 0) {
+        return;
+      }
+    } else {
+      if (!orderEvent) {
+        return;
+      }
       orderEvent = [orderEvent];
     }
     console.info('TXS job', orderEvent, txsData);
@@ -344,5 +350,5 @@ export class TypeEventWasm {
         data: JSON.stringify(orderEvent),
       }),
     );
-  } 
+  }
 }
