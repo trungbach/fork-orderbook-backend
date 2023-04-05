@@ -103,7 +103,7 @@ export class OrderConsumer {
     if (amount < Number(rootOrder.amount)) {
       const totalAmountFullFilled = await OrdereRepository.sumOfAmountOrder(
         tradeSequence,
-        OrderStatus.FILLING,
+        OrderStatus.FULL_FILLED,
       );
       rootOrder.status = OrderStatus.FILLING;
       await OrdereRepository.save(rootOrder);

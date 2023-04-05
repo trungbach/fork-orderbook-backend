@@ -8,10 +8,10 @@ export class OrderDto {
   time: number;
 
   constructor(order: Order) {
-    this.price = order.price;
-    this.amount = order.amount;
-    this.side = order.side;
-    this.status = order.status;
-    this.time = order.time;
+    this.price = +order.price;
+    this.amount = +order.amount;
+    this.side = +order.side;
+    this.status = +order.status;
+    this.time = +order.time;
   }
 }

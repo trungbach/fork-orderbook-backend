@@ -283,14 +283,16 @@ export class TypeEventWasm {
       }
       orderEvent = [orderEvent];
     }
-    console.info('TXS job', orderEvent, txsData);
-    await this.queueServ.add('order-job', orderEvent, {
-      removeOnComplete: true,
-      attempts: 3,
-    });
-    // store txs (debug, current not use UI)
+
     try {
-      this.storeTransaction(orderEvent, txsData);
+      const tx = await this.storeTransaction(orderEvent, txsData);
+      if (!tx) {
+        console.info('TXS job', orderEvent, txsData);
+        await this.queueServ.add('order-job', orderEvent, {
+          removeOnComplete: true,
+          attempts: 3,
+        });
+      }
     } catch (err) {
       logErrorConsole('Error store txs', err);
     }
@@ -350,5 +352,7 @@ export class TypeEventWasm {
         data: JSON.stringify(orderEvent),
       }),
     );
+
+    return false;
   }
 }
