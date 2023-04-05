@@ -49,6 +49,7 @@ export class OrderConsumer {
         status: OrderStatus.OPEN,
       },
     });
+
     if (_order) {
       return;
     }
@@ -88,25 +89,76 @@ export class OrderConsumer {
     const { tradeSequence, amount, userId, price, side } = order;
     const intTime = moment(order.time).unix();
 
-    const _order = await OrdereRepository.findOne({
+    const rootOrder = await OrdereRepository.findOne({
       where: {
         tradeSequence,
         status: OrderStatus.OPEN,
       },
     });
 
-    if (!_order) {
+    if (!rootOrder) {
       return;
     }
 
-    if (amount < _order.amount) {
-      // change status of order to filling
-      _order.status = OrderStatus.FILLING;
-      await OrdereRepository.save(_order);
+    if (amount < Number(rootOrder.amount)) {
+      const totalAmountFullFilled = await OrdereRepository.sumOfAmountOrder(
+        tradeSequence,
+        OrderStatus.FILLING,
+      );
+      rootOrder.status = OrderStatus.FILLING;
+      await OrdereRepository.save(rootOrder);
 
-      // create new two orders, order_1 for full filled
-      const _order_1 = new Order(
-        _order.productId,
+      const newOpen =
+        Number(rootOrder.amount) - amount + Number(totalAmountFullFilled);
+      const fullFill = Number(rootOrder.amount) - newOpen;
+
+      const fullFillOrder = new Order(
+        rootOrder.productId,
+        userId,
+        price,
+        fullFill,
+        intTime,
+        tradeSequence,
+        side,
+        OrderStatus.FULL_FILLED,
+      );
+      const newOpenOrder = new Order(
+        rootOrder.productId,
+        userId,
+        price,
+        newOpen,
+        intTime,
+        tradeSequence,
+        side,
+        OrderStatus.OPEN,
+      );
+      await OrdereRepository.save([newOpenOrder, fullFillOrder]);
+      await this.sendToCandleQueue({
+        productId: `${rootOrder.productId}`,
+        price: price,
+        volume: price * fullFill,
+        time: order.time,
+      });
+
+      return;
+    }
+
+    if (amount === Number(rootOrder.amount)) {
+      rootOrder.status = OrderStatus.FULL_FILLED;
+      await OrdereRepository.save(rootOrder); 
+
+      const closeOrder = new Order(
+        rootOrder.productId,
+        userId,
+        price,
+        0,
+        intTime,
+        tradeSequence,
+        side,
+        OrderStatus.CLOSE,
+      );
+      const fullFillOrder = new Order(
+        rootOrder.productId,
         userId,
         price,
         amount,
@@ -116,37 +168,11 @@ export class OrderConsumer {
         OrderStatus.FULL_FILLED,
       );
 
-      // order_2 for open
-      const _order_2 = new Order(
-        _order.productId,
-        userId,
-        price,
-        _order.amount - amount,
-        intTime,
-        tradeSequence,
-        side,
-        OrderStatus.OPEN,
-      );
-
-      await OrdereRepository.save([_order_1, _order_2]);
+      await OrdereRepository.save([closeOrder, fullFillOrder]);
       await this.sendToCandleQueue({
-        productId: `${_order_1.productId}`,
-        price: _order_1.price,
-        volume: _order_1.price * _order_1.amount,
-        time: order.time,
-      });
-
-      return;
-    }
-
-    if (amount === _order.amount) {
-      _order.status = OrderStatus.FULL_FILLED;
-
-      await OrdereRepository.save(_order);
-      await this.sendToCandleQueue({
-        productId: `${_order.productId}`,
-        price: _order.price,
-        volume: _order.price * _order.amount,
+        productId: `${rootOrder.productId}`,
+        price: price,
+        volume: price * amount,
         time: order.time,
       });
 

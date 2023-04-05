@@ -3,6 +3,7 @@ export enum OrderStatus {
   FULL_FILLED = 2,
   FILLING = 3,
   CANCELED = 10,
+  CLOSE = 4,
 }
 
 export enum OrderSide {
