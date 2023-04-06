@@ -6,6 +6,7 @@ export class OrderDto {
   amount: number;
   side: number;
   status: number;
+  trade_sequence: number;
   time: number;
 
   constructor(order: Order) {
@@ -15,5 +16,6 @@ export class OrderDto {
     this.side = +order.side;
     this.status = +order.status;
     this.time = +order.time;
+    this.trade_sequence = +order.tradeSequence;
   }
 }

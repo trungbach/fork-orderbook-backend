@@ -5,10 +5,14 @@ import { Request, Response, NextFunction } from 'express';
 export class PaginationMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     let limit = +req?.query?.limit || 30;
-    const offset = +req?.query?.offset || 0;
+    let offset = +req?.query?.offset || 0;
 
     if (limit < 0 || limit > 50) {
       limit = 50;
+    }
+
+    if (offset < 0) {
+        offset = 0
     }
 
     const pagination: any = {};
