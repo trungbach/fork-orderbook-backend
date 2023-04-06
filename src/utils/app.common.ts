@@ -19,3 +19,11 @@ export const fetchWithTimeout = async (
     ),
   ]);
 };
+
+export const validateOraiAddress = (address: string): boolean => {
+    const addressLength = address.length;
+    if (addressLength === 43 || addressLength === 63) {
+        return true
+    }
+    return false
+}

@@ -24,3 +24,10 @@ export enum OrderAction {
   EXECUTE_ORDER = 'EXECUTE_ORDER',
   CANCELLED = 'CANCEL_ORDER',
 }
+
+export const OrderStatusParams = {
+  OPEN: 1,
+  FILLED: 2,
+  ALL: 5,
+  CANCEL: 10,
+};

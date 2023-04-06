@@ -1,4 +1,4 @@
-import { OrderStatus } from 'src/utils/constant';
+import { OrderStatus, OrderStatusParams } from 'src/utils/constant';
 import PostgresDB from '../../config/postgres';
 import { Order } from '../../entities/postgre';
 
@@ -36,7 +36,11 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     }
 
     if (status) {
-      qb = qb.andWhere('order.status = :status', { status });
+      if (status === OrderStatusParams.ALL) {
+        qb = qb.andWhere('order.status IN (1,10)');
+      } else {
+        qb = qb.andWhere('order.status = :status', { status });
+      }
     }
 
     const orders = await qb.limit(limit).offset(offset).select().getMany();

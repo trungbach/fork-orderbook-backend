@@ -4,10 +4,15 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { OrderController, UserController, CandleController } from './controllers';
+import {
+  OrderController,
+  UserController,
+  CandleController,
+} from './controllers';
 import { CandleMiddleware } from './middlewares/candle.middleware';
 import { PaginationMiddleware } from './middlewares/pagination.middleware';
 import { OrderService, UserService, CandleService } from './services';
+import { OrderMiddleware } from './middlewares/order.middleware';
 
 @Module({
   controllers: [OrderController, UserController, CandleController],
@@ -22,6 +27,13 @@ export class ApiModule implements NestModule {
         path: '/v1/orders/users/:address*',
         method: RequestMethod.GET,
       },
+      {
+        path: '/v1/orders/products/:product_id*',
+        method: RequestMethod.GET,
+      },
+    );
+
+    consumer.apply(OrderMiddleware).forRoutes(
       {
         path: '/v1/orders/products/:product_id*',
         method: RequestMethod.GET,

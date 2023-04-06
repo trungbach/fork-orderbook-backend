@@ -18,7 +18,7 @@ export class OrderController {
   @ApiParam({
     name: 'address',
     required: true,
-    description: 'query by user Orai address',
+    description: 'history transactions by user Orai address',
     type: Number
   })
   @Get('/users/:address')
