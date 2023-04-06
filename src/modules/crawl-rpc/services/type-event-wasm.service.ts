@@ -242,6 +242,9 @@ export class TypeEventWasm {
         case 'direction':
           orderEvent.side = OrderDirection[val];
           break;
+        case 'status':
+          orderEvent.tradeStatus = val;
+          break;
         case 'filled_offer_amount':
           volume = Number(val);
           break;

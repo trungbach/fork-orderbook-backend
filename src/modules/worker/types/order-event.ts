@@ -7,6 +7,7 @@ class OrderEvent {
   tradeSequence: number; // is order_id field
   side: number; // is direction field
   action: string;
+  tradeStatus?: string;
 }
 
 export { OrderEvent };
