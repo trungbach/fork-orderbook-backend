@@ -53,7 +53,7 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     qb = qb
       .where('order.product_id = :product_id', { product_id: productId })
       .andWhere('order.status = :status', {
-        status: OrderStatus.FULL_FILLED,
+        status: OrderStatus.FUL_FILLED,
       })
       .orderBy('order.time', 'DESC');
 

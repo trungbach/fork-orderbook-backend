@@ -100,8 +100,8 @@ export class OrderConsumer {
       return;
     }
 
-    if (tradeStatus === 'Fullfilled') {
-      rootOrder.status = OrderStatus.FULL_FILLED;
+    if (tradeStatus === 'Fullfilled' || amount === rootOrder.amount) {
+      rootOrder.status = OrderStatus.FUL_FILLED;
       await OrdereRepository.save(rootOrder);
 
       const closeOrder = new Order(
@@ -126,10 +126,10 @@ export class OrderConsumer {
       return;
     }
 
-    if (amount < Number(rootOrder.amount)) {
+    if (tradeStatus === 'PartialFilled' || amount < Number(rootOrder.amount)) {
       const totalAmountFullFilled = await OrdereRepository.sumOfAmountOrder(
         tradeSequence,
-        OrderStatus.FULL_FILLED,
+        OrderStatus.FUL_FILLED,
       );
       rootOrder.status = OrderStatus.FILLING;
       await OrdereRepository.save(rootOrder);
@@ -146,7 +146,7 @@ export class OrderConsumer {
         intTime,
         tradeSequence,
         side,
-        fullFill > 0 ? OrderStatus.FULL_FILLED : OrderStatus.CLOSE,
+        fullFill > 0 ? OrderStatus.FUL_FILLED : OrderStatus.CLOSE,
       );
       const newOpenOrder = new Order(
         rootOrder.productId,

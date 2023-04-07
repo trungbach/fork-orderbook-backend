@@ -25,7 +25,8 @@ jobs:
           IREPO: ${{ secrets.IMAGE_REPO }}
           IVERSION: ${{ env.IVERSION }}
           INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
-        run: chmod 777 -R ./ci
+        run: |
+          chmod 777 -R ./ci
           ./ci/build.sh
 
       - name: Notify to Discord

@@ -1,6 +1,6 @@
 export enum OrderStatus {
   OPEN = 1,
-  FULL_FILLED = 2,
+  FUL_FILLED = 2,
   FILLING = 3,
   CANCELED = 10,
   CLOSE = 4,
