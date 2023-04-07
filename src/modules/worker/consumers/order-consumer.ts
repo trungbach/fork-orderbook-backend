@@ -86,7 +86,7 @@ export class OrderConsumer {
   }
 
   private async handleExecuteOrder(order: OrderEvent) {
-    const { tradeSequence, amount, userId, price, side } = order;
+    const { tradeSequence, amount, userId, price, side, tradeStatus } = order;
     const intTime = moment(order.time).unix();
 
     const rootOrder = await OrdereRepository.findOne({
@@ -97,6 +97,32 @@ export class OrderConsumer {
     });
 
     if (!rootOrder) {
+      return;
+    }
+
+    if (tradeStatus === 'Fullfilled') {
+      rootOrder.status = OrderStatus.FULL_FILLED;
+      await OrdereRepository.save(rootOrder);
+
+      const closeOrder = new Order(
+        rootOrder.productId,
+        userId,
+        price,
+        amount,
+        intTime,
+        tradeSequence,
+        side,
+        OrderStatus.CLOSE,
+      );
+
+      await OrdereRepository.save([closeOrder]);
+      await this.sendToCandleQueue({
+        productId: `${rootOrder.productId}`,
+        price: price,
+        volume: price * amount,
+        time: order.time,
+      });
+
       return;
     }
 
@@ -137,32 +163,6 @@ export class OrderConsumer {
         productId: `${rootOrder.productId}`,
         price: price,
         volume: price * fullFill,
-        time: order.time,
-      });
-
-      return;
-    }
-
-    if (amount === Number(rootOrder.amount)) {
-      rootOrder.status = OrderStatus.FULL_FILLED;
-      await OrdereRepository.save(rootOrder); 
-
-      const closeOrder = new Order(
-        rootOrder.productId,
-        userId,
-        price,
-        0,
-        intTime,
-        tradeSequence,
-        side,
-        OrderStatus.CLOSE,
-      );
-
-      await OrdereRepository.save([closeOrder]);
-      await this.sendToCandleQueue({
-        productId: `${rootOrder.productId}`,
-        price: price,
-        volume: price * amount,
         time: order.time,
       });
 

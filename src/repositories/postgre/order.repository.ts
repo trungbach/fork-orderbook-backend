@@ -37,7 +37,7 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
 
     if (status) {
       if (status === OrderStatusParams.ALL) {
-        qb = qb.andWhere('order.status IN (1,10)');
+        qb = qb.andWhere('order.status IN (2,10)');
       } else {
         qb = qb.andWhere('order.status = :status', { status });
       }
