@@ -13,9 +13,10 @@ services:
       - orderbook-network
 
   webserver:
-    image: oraichain/foundation-orderbook_explorer-stg:0.0.3
+    image: oraichain/foundation-orderbook_explorer:f343bcd
     container_name: ob_api-stg
-    command: node /app/dist/main.js
+    command: 
+      - /app/dist/main.js
     env_file:
       - .env
     logging:

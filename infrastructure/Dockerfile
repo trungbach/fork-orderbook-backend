@@ -23,7 +23,7 @@ ENV NODE_ENV=production
 COPY --from=dev /app/node_modules /app/node_modules
 RUN yarn build
 
-FROM node:19-alpine as prod
+FROM gcr.io/distroless/nodejs18-debian11 as prod
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/node_modules /app/node_modules
 EXPOSE 5000
