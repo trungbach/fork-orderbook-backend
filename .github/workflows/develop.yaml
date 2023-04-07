@@ -17,8 +17,7 @@ jobs:
 
       - name: Set environment
         run: |
-          IVERSION=$(git rev-parse --short HEAD)
-          echo $IVERSION >> $GITHUB_ENV
+          echo IVERSION=$(git rev-parse --short HEAD) >> $GITHUB_ENV
 
       - name: Build and push image
         env:
