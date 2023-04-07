@@ -100,7 +100,7 @@ export class OrderConsumer {
       return;
     }
 
-    if (tradeStatus === 'Fullfilled' || amount === rootOrder.amount) {
+    if (tradeStatus === 'Fulfilled') {
       rootOrder.status = OrderStatus.FUL_FILLED;
       await OrdereRepository.save(rootOrder);
 
@@ -126,7 +126,7 @@ export class OrderConsumer {
       return;
     }
 
-    if (tradeStatus === 'PartialFilled' || amount < Number(rootOrder.amount)) {
+    if (tradeStatus === 'PartialFilled') {
       const totalAmountFullFilled = await OrdereRepository.sumOfAmountOrder(
         tradeSequence,
         OrderStatus.FUL_FILLED,
