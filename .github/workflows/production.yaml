@@ -1,8 +1,8 @@
-name: Continuous integration for staging development
+name: Continuous integration for production environment
 
 on:
   push:
-    branches: [develop]
+    branches: [master]
 
 jobs:
   build:
