@@ -90,7 +90,6 @@ export class TypeEventWasm {
     const orderEvent = new OrderEvent();
     let tokenFrom: string;
     let tokenTo: string;
-    let volume = 0;
     for (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
@@ -108,7 +107,7 @@ export class TypeEventWasm {
           if (assetTo.length !== 2) {
             break;
           }
-          volume = Number(assetTo[0]);
+          orderEvent.volume = Number(assetTo[0]);
           tokenTo = assetTo[1].toLowerCase();
           break;
         case 'ask_asset':
@@ -130,11 +129,11 @@ export class TypeEventWasm {
      */
     if (orderEvent.side === OrderDirection.Sell) {
       const volumAmount = orderEvent.amount;
-      orderEvent.amount = volume;
-      volume = volumAmount;
+      orderEvent.amount = orderEvent.volume;
+      orderEvent.volume = volumAmount;
     }
     if (orderEvent.amount) {
-      orderEvent.price = volume / orderEvent.amount;
+      orderEvent.price = orderEvent.volume / orderEvent.amount;
     }
     orderEvent.productId = await this.findProductId(tokenFrom, tokenTo);
     if (!orderEvent.productId) {
@@ -229,7 +228,6 @@ export class TypeEventWasm {
    */
   private async orderItemMatched(eventAttrs: AttributeEvent[]) {
     const orderEvent = new OrderEvent();
-    let volume: number;
     for (const attr of eventAttrs) {
       const val = attr.value.trim();
       switch (attr.key) {
@@ -246,7 +244,7 @@ export class TypeEventWasm {
           orderEvent.tradeStatus = val;
           break;
         case 'filled_offer_amount':
-          volume = Number(val);
+          orderEvent.volume = Number(val);
           break;
         case 'filled_ask_amount':
           orderEvent.amount = Number(val);
@@ -263,11 +261,11 @@ export class TypeEventWasm {
      */
     if (orderEvent.side === OrderDirection.Sell) {
       const volumAmount = orderEvent.amount;
-      orderEvent.amount = volume;
-      volume = volumAmount;
+      orderEvent.amount = orderEvent.volume;
+      orderEvent.volume = volumAmount;
     }
     if (orderEvent.amount) {
-      orderEvent.price = volume / orderEvent.amount;
+      orderEvent.price = orderEvent.volume / orderEvent.amount;
     }
     orderEvent.action = OrderAction.EXECUTE_ORDER;
     return orderEvent;
