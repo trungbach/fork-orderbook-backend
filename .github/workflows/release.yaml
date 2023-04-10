@@ -19,7 +19,7 @@ jobs:
       - name: Build and push image
         env:
           IVERSION: ${{ github.ref_name }}
-          INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
+          INAME: ${{ secrets.IMAGE_REPO }}:${{ github.ref_name }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
         run: |
