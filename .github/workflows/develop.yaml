@@ -22,7 +22,6 @@ jobs:
       - name: Build and push image
         env:
           IREPO: ${{ secrets.IMAGE_REPO }}
-          IVERSION: ${{ env.IVERSION }}
           INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
