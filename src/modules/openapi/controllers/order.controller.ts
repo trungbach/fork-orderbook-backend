@@ -3,6 +3,8 @@ import { ApiExtraModels, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiPagination, Pagination } from '../decorators/pagination.decorator';
 import { OrderService } from '../services';
 import { IPagination } from '../types/pagnation';
+import { QueryOrderDto } from '../models/order.dto';
+import { OrderSide, OrderStatus } from 'src/utils/constant';
 
 @ApiTags('Orders')
 @ApiExtraModels(Pagination)
@@ -15,78 +17,20 @@ export class OrderController {
     maxSize: 50,
     offset: 0,
   })
-  @ApiParam({
-    name: 'address',
-    required: true,
-    description: 'history transactions by user Orai address',
-    type: Number
-  })
-  @Get('/users/:address')
-  async listOrderByUser(
-    @Param('address') address: string,
-    @Pagination() pagination: IPagination,
-  ) {
-    const { limit, offset } = pagination;
-    return await this.orderService.getByAddress(address, limit, offset);
-  }
-
-  @ApiPagination({
-    defaultLimit: 30,
-    maxSize: 50,
-    offset: 0,
-  })
-  @ApiParam({
-    name: 'product_id',
-    required: true,
-    description: 'query by product id',
-    type: Number
-  })
-  @ApiQuery({
-    name:'status',
-    required: false,
-    description: 'query by status'
-  })
-  @ApiQuery({
-    name:'address',
-    required: false,
-    description: 'query by address'
-  })
   @Get('/products/:product_id')
-  async listOrderByProduct(
+  async getOrders(
     @Param('product_id') product_id: number,
     @Pagination() pagination: IPagination,
-    @Query('status') status?: number,
-    @Query('address') address?: string,
+    @Query() params: QueryOrderDto,
   ) {
-    return await this.orderService.getByProduct(
+    const orders = await this.orderService.getByProduct(
       product_id,
       pagination.limit,
       pagination.offset,
-      address,
-      status,
+      params.address,
+      params?.order_side?.map((side) => Number(OrderSide[side])),
+      params?.order_status?.map((status) => Number(OrderStatus[status])),
     );
-  }
-
-  @ApiPagination({
-    defaultLimit: 30,
-    maxSize: 50,
-    offset: 0,
-  })
-  @ApiParam({
-    name: 'product_id',
-    required: true,
-    description: 'query by product id',
-    type: Number
-  })
-  @Get('/products/:product_id/recent_trade')
-  async listOrderRecentTradedByProduct(
-    @Param('product_id') product_id: number,
-    @Pagination() pagination: IPagination,
-  ) {
-    return await this.orderService.getRecentTraded(
-      product_id,
-      pagination.limit,
-      pagination.offset,
-    );
-  }
+    return orders;
+  } 
 }

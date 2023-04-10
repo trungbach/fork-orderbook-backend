@@ -1,4 +1,4 @@
-import { OrderStatus, OrderStatusParams } from 'src/utils/constant';
+import { OrderStatus } from 'src/utils/constant';
 import PostgresDB from '../../config/postgres';
 import { Order } from '../../entities/postgre';
 
@@ -16,34 +16,30 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     return orders;
   },
 
-  async findOrderByProduct(
-    productId: number,
-    limit: number,
-    offset: number,
-    address?: string,
-    status?: number,
-  ) {
+  async findOrderByProduct(params: any) {
     let qb = this.createQueryBuilder('order');
 
     qb = qb
-      .leftJoin('o_product', 'p', 'p.id = order.product_id')
-      .leftJoin('o_user', 'u', 'u.id = order.user_id')
-      .where('p.id = :product_id', { product_id: productId })
-      .orderBy('order.time', 'DESC');
+      .where('order.product_id = :product_id', { product_id: params.productId })
+      .orderBy('order.id', 'DESC');
 
-    if (address) {
-      qb = qb.andWhere('u.address = :address', { address });
+    if (params?.userId) {
+      qb = qb.andWhere('order.user_id = :user_id', { user_id: params.userId });
     }
 
-    if (status) {
-      if (status === OrderStatusParams.ALL) {
-        qb = qb.andWhere('order.status IN (2,10)');
-      } else {
-        qb = qb.andWhere('order.status = :status', { status });
-      }
+    if (params?.status) {
+      qb = qb.andWhere('order.status IN (:status)', { status: params.status });
     }
 
-    const orders = await qb.limit(limit).offset(offset).select().getMany();
+    if (params?.side) {
+      qb = qb.andWhere('order.side IN (:side)', { side: params.side });
+    }
+
+    const orders = await qb
+      .limit(params.limit)
+      .offset(params.offset)
+      .select()
+      .getMany();
     return orders;
   },
 

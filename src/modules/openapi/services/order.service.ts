@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Order } from 'src/entities/postgre';
-import { OrdereRepository } from 'src/repositories/postgre';
+import { Order, User } from 'src/entities/postgre';
+import {
+  OrdereRepository,
+  ProductRepository,
+  UserRepository,
+} from 'src/repositories/postgre';
 import { OrderDto } from '../models/order.dto';
 import { PageList } from '../models/page-list.dto';
 
@@ -15,15 +19,36 @@ export class OrderService {
     limit: number,
     offset: number,
     address?: string,
-    status?: number,
+    status?: number[],
+    side?: number[],
   ): Promise<PageList<OrderDto[]>> {
-    const  orders = await OrdereRepository.findOrderByProduct(
+    const product = await ProductRepository.findOne({
+      where: { id: productId },
+    });
+    let user: User = null;
+
+    if (address) {
+      user = await UserRepository.findOne({ where: { address } });
+    }
+
+    if (!product) {
+      return new PageList<OrderDto[]>([]);
+    }
+
+    if (address && !user) {
+      return new PageList<OrderDto[]>([]);
+    }
+
+    const params = {
       productId,
       limit,
       offset,
-      address,
-      status,
-    );
+      ...(address ? { userId: user.id } : {}),
+      ...(status ? { status } : {}),
+      ...(side ? { side } : {}),
+    };
+
+    const orders = await OrdereRepository.findOrderByProduct(params);
 
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
     return new PageList<OrderDto[]>(items);
@@ -34,11 +59,7 @@ export class OrderService {
     limit: number,
     offset: number,
   ): Promise<PageList<OrderDto[]>> {
-    const orders = await OrdereRepository.findByAddress(
-      address,
-      limit,
-      offset,
-    );
+    const orders = await OrdereRepository.findByAddress(address, limit, offset);
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
     return new PageList<OrderDto[]>(items);
   }

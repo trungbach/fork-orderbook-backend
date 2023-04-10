@@ -33,12 +33,12 @@ export class ApiModule implements NestModule {
       },
     );
 
-    consumer.apply(OrderMiddleware).forRoutes(
-      {
-        path: '/v1/orders/products/:product_id*',
-        method: RequestMethod.GET,
-      },
-    );
+    // consumer.apply(OrderMiddleware).forRoutes(
+    //   {
+    //     path: '/v1/orders/products/:product_id*',
+    //     method: RequestMethod.GET,
+    //   },
+    // );
 
     consumer.apply(CandleMiddleware).forRoutes({
       path: '/v1/candle*',
