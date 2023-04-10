@@ -18,9 +18,10 @@ jobs:
 
       - name: Build and push image
         env:
-          IREPO: ${{ github.ref_name }}
-          IVERSION: ${{ env.IVERSION }}
+          IVERSION: ${{ github.ref_name }}
           INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
         run: |
           chmod 777 -R ./ci
           ./ci/build.sh
