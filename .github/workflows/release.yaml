@@ -2,7 +2,8 @@ name: Continuous integration for production environment
 
 on:
   push:
-    branches: [master]
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
@@ -15,14 +16,9 @@ jobs:
         run: |
           echo "dir=$(npm config get cache)"  >> $GITHUB_OUTPUT
 
-      - name: Set environment
-        run: |
-          IVERSION=$(git rev-parse --short HEAD)
-          echo IVERSION >> $GITHUB_ENV
-
       - name: Build and push image
         env:
-          IREPO: ${{ secrets.IMAGE_REPO }}
+          IREPO: ${{ github.ref_name }}
           IVERSION: ${{ env.IVERSION }}
           INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
         run: |
