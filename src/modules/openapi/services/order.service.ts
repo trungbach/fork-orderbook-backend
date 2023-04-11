@@ -19,8 +19,8 @@ export class OrderService {
     limit: number,
     offset: number,
     address?: string,
-    status?: number[],
-    side?: number[],
+    status?: string[],
+    side?: string[],
   ): Promise<PageList<OrderDto[]>> {
     const product = await ProductRepository.findOne({
       where: { id: productId },
@@ -44,8 +44,8 @@ export class OrderService {
       limit,
       offset,
       ...(address ? { userId: user.id } : {}),
-      ...(status ? { status } : {}),
-      ...(side ? { side } : {}),
+      ...(status?.length ? { status } : {}),
+      ...(side?.length ? { side } : {}),
     };
 
     const orders = await OrdereRepository.findOrderByProduct(params);

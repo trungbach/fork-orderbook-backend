@@ -28,11 +28,11 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     }
 
     if (params?.status) {
-      qb = qb.andWhere('order.status IN (:status)', { status: params.status });
+      qb = qb.andWhere('order.status IN (:...status)', { status: params.status });
     }
 
     if (params?.side) {
-      qb = qb.andWhere('order.side IN (:side)', { side: params.side });
+      qb = qb.andWhere('order.side IN (:...side)', { side: params.side });
     }
 
     const orders = await qb

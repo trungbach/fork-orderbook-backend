@@ -39,7 +39,7 @@ export class QueryOrderDto {
   address?: string;
 
   @ApiProperty({
-    name: 'order_side',
+    name: 'order_side[]',
     description: 'side of order',
     required: false,
     enum: OrderSide,
@@ -51,7 +51,7 @@ export class QueryOrderDto {
   order_side?: OrderSide[];
 
   @ApiProperty({
-    name: 'order_status',
+    name: 'order_status[]',
     description: 'status of order',
     required: false,
     enum: OrderStatus,
