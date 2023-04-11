@@ -36,4 +36,4 @@ jobs:
           webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
           username: "docker-push-image"
-          message: ":green_circle: The docker image with hash `${{ secrets.IMAGE_REPO_STG }}:${{ env.IVERSION }}` was published"
+          message: ":green_circle: The docker image with hash `${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}` was published"
