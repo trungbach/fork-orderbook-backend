@@ -13,6 +13,7 @@ const seeds: Order[] = [
     time: momen(new Date()).unix(),
     status: 1,
     tradeSequence: 1,
+    volume: 0
   },
   {
     id: 2,
@@ -24,6 +25,7 @@ const seeds: Order[] = [
     time: momen().unix(),
     status: 2,
     tradeSequence: 2,
+    volume: 0
   },
   {
     id: 3,
@@ -35,6 +37,7 @@ const seeds: Order[] = [
     time: momen().unix(),
     status: 2,
     tradeSequence: 3,
+    volume: 0
   },
 ];
 

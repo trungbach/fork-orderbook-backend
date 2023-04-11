@@ -18,9 +18,10 @@ jobs:
 
       - name: Build and push image
         env:
-          IREPO: ${{ github.ref_name }}
-          IVERSION: ${{ env.IVERSION }}
-          INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
+          IVERSION: ${{ github.ref_name }}
+          INAME: ${{ secrets.IMAGE_REPO }}:${{ github.ref_name }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
         run: |
           chmod 777 -R ./ci
           ./ci/build.sh
@@ -31,4 +32,4 @@ jobs:
           webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
           username: "docker-push-image"
-          message: ":green_circle: The docker image with hash `${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}` was published"
+          message: ":green_circle: The docker image with hash `${{ secrets.IMAGE_REPO }}:${{ github.ref_name }}` was published"

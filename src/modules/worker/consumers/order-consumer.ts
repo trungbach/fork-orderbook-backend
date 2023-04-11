@@ -63,6 +63,7 @@ export class OrderConsumer {
       order.tradeSequence,
       order.side,
       OrderStatus.OPEN,
+      order.volume,
     );
 
     await OrdereRepository.save(_order);
@@ -86,7 +87,7 @@ export class OrderConsumer {
   }
 
   private async handleExecuteOrder(order: OrderEvent) {
-    const { tradeSequence, amount, userId, price, side, tradeStatus } = order;
+    const { tradeSequence, amount, userId, price, side, tradeStatus, volume } = order;
     const intTime = moment(order.time).unix();
 
     const rootOrder = await OrdereRepository.findOne({
@@ -113,13 +114,14 @@ export class OrderConsumer {
         tradeSequence,
         side,
         OrderStatus.CLOSE,
+        rootOrder.volume,
       );
 
       await OrdereRepository.save([closeOrder]);
       await this.sendToCandleQueue({
         productId: `${rootOrder.productId}`,
         price: price,
-        volume: price * amount,
+        volume: volume,
         time: order.time,
       });
 
@@ -127,7 +129,7 @@ export class OrderConsumer {
     }
 
     if (tradeStatus === 'PartialFilled') {
-      const totalAmountFullFilled = await OrdereRepository.sumOfAmountOrder(
+      const totalVolumeFulFilled = await OrdereRepository.sumOfVolumeOrder(
         tradeSequence,
         OrderStatus.FUL_FILLED,
       );
@@ -135,28 +137,30 @@ export class OrderConsumer {
       await OrdereRepository.save(rootOrder);
 
       const newOpen =
-        Number(rootOrder.amount) - amount + Number(totalAmountFullFilled);
-      const fulFilled = Number(rootOrder.amount) - newOpen;
+        Number(rootOrder.volume) - volume + Number(totalVolumeFulFilled);
+      const fulFilled = Number(rootOrder.volume) - newOpen;
 
       const fulFilledOrder = new Order(
         rootOrder.productId,
         userId,
         price,
-        fulFilled,
+        amount,
         intTime,
         tradeSequence,
         side,
         fulFilled > 0 ? OrderStatus.FUL_FILLED : OrderStatus.CLOSE,
+        fulFilled,
       );
       const newOpenOrder = new Order(
         rootOrder.productId,
         userId,
         price,
-        newOpen,
+        newOpen / price,
         intTime,
         tradeSequence,
         side,
         OrderStatus.OPEN,
+        newOpen,
       );
       await OrdereRepository.save([newOpenOrder, fulFilledOrder]);
       await this.sendToCandleQueue({

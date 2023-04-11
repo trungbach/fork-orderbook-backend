@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS "o_order" (
   "trade_sequence" int NOT NULL,
   "price" decimal(32,16) NOT NULL,
   "amount" decimal(32,16) NOT NULL,
+  "volume" decimal(32,16) NOT NULL,
   "side" int NOT NULL,
   "time" bigint NOT NULL,
   "user_id" int NOT NULL,

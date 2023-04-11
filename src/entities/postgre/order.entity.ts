@@ -54,6 +54,13 @@ export class Order {
   })
   tradeSequence: number;
 
+  @Column({
+    // type: 'decimal',
+    // precision: 32,
+    // scale: 16,
+  })
+  volume: number;
+
   @CreatedAt()
   created_at?: Date;
 
@@ -69,6 +76,7 @@ export class Order {
     tradeSequence: number,
     side: number,
     status: number,
+    volume: number,
   ) {
     this.productId = productId;
     this.userId = userId;
@@ -78,5 +86,6 @@ export class Order {
     this.tradeSequence = tradeSequence;
     this.side = side;
     this.status = status;
+    this.volume = volume;
   }
 }
