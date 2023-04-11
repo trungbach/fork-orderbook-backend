@@ -12,6 +12,14 @@ import { OrderSide, OrderStatus } from 'src/utils/constant';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get('/products/:product_id/open')
+  async getOpenOrders(
+    @Param('product_id') product_id: number,
+    @Query('side') side: number,
+  ) {
+    return await this.orderService.getOpen(product_id, side);
+  }
+
   @ApiPagination({
     defaultLimit: 30,
     maxSize: 50,

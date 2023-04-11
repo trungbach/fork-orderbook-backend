@@ -28,7 +28,9 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     }
 
     if (params?.status) {
-      qb = qb.andWhere('order.status IN (:...status)', { status: params.status });
+      qb = qb.andWhere('order.status IN (:...status)', {
+        status: params.status,
+      });
     }
 
     if (params?.side) {
@@ -75,5 +77,19 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
 
     const { sum } = await qb.getRawOne();
     return sum;
+  },
+
+  async findOpenOrders(product_id: number, side: number) {
+    const qb = this.createQueryBuilder('order')
+      .where('order.status = :status', { status: OrderStatus.OPEN })
+      .andWhere('order.side = :side', { side })
+      .andWhere('order.product_id = :product_id', { product_id })
+      .groupBy('order.price')
+      .limit(17) // only get 17 records for display
+      .orderBy('order.price', 'DESC')
+      .select(['order.price', 'SUM(order.volume)']);
+
+    const result = await qb.getRawMany();
+    return result;
   },
 });

@@ -4,8 +4,9 @@ import { OrderEvent, TradeEvent } from '../types';
 import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
 import * as moment from 'moment';
-import { OrderAction, OrderStatus } from 'src/utils/constant';
+import { TICKER_PRICE, OrderAction, OrderStatus } from 'src/utils/constant';
 import { logErrorConsole } from 'src/utils/log-provider';
+import { Redis } from 'src/utils';
 
 @Processor('order-queue')
 export class OrderConsumer {
@@ -87,7 +88,8 @@ export class OrderConsumer {
   }
 
   private async handleExecuteOrder(order: OrderEvent) {
-    const { tradeSequence, amount, userId, price, side, tradeStatus, volume } = order;
+    const { tradeSequence, amount, userId, price, side, tradeStatus, volume } =
+      order;
     const intTime = moment(order.time).unix();
 
     const rootOrder = await OrdereRepository.findOne({
@@ -100,6 +102,8 @@ export class OrderConsumer {
     if (!rootOrder) {
       return;
     }
+    const redisInstance = await Redis.getInstance();
+    await redisInstance.set(`${rootOrder.productId}.${TICKER_PRICE}`, price);
 
     if (tradeStatus === 'Fulfilled') {
       rootOrder.status = OrderStatus.FUL_FILLED;
@@ -124,7 +128,6 @@ export class OrderConsumer {
         volume: volume,
         time: order.time,
       });
-
       return;
     }
 

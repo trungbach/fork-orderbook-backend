@@ -78,4 +78,12 @@ export class OrderService {
     const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
     return new PageList<OrderDto[]>(items);
   }
+
+  async getOpen(
+    product_id: number, 
+    side: number
+  ) {
+    const orders = await OrdereRepository.findOpenOrders(product_id, side);
+    return orders
+  }
 }

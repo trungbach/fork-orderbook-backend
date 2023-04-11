@@ -31,3 +31,5 @@ export const OrderStatusParams = {
   ALL: 5,
   CANCEL: 10,
 };
+
+export const TICKER_PRICE = 'ticker';
