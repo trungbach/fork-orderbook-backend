@@ -1,11 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import {
-  IsArray,
-  IsEnum,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { trim } from 'lodash';
 import { Order } from 'src/entities/postgre';
 import { OrderSide, OrderStatus } from 'src/utils/constant';
@@ -18,6 +13,7 @@ export class OrderDto {
   status: number;
   trade_sequence: number;
   time: number;
+  volume: number;
 
   constructor(order: Order) {
     this.id = order.id;
@@ -27,6 +23,7 @@ export class OrderDto {
     this.status = +order.status;
     this.time = +order.time;
     this.trade_sequence = +order.tradeSequence;
+    this.volume = +order.volume;
   }
 }
 

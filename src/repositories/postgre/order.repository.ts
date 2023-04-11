@@ -66,4 +66,14 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     const { sum } = await qb.getRawOne();
     return sum;
   },
+
+  async sumOfVolumeOrder(tradeSequence: number, status: number) {
+    const qb = this.createQueryBuilder('order')
+      .where('order.trade_sequence = :tradeSequence', { tradeSequence })
+      .andWhere('order.status = :status', { status })
+      .select('SUM(order.volume)', 'sum');
+
+    const { sum } = await qb.getRawOne();
+    return sum;
+  },
 });
