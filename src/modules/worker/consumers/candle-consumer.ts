@@ -8,7 +8,7 @@ import { min, max, sum } from 'lodash';
 import { logErrorConsole } from 'src/utils/log-provider';
 import { OrderConsumer } from './order-consumer';
 
-@Processor('order-queue')
+@Processor('candle-queue')
 export class CandleConsumer {
   private GRANULARITY_ARR = [1, 5, 15, 30, 60, 360, 1440];
 

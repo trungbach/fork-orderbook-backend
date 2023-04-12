@@ -11,7 +11,7 @@ import { Redis } from 'src/utils';
 @Processor('order-queue')
 export class OrderConsumer {
   constructor(
-    @InjectQueue('order-queue')
+    @InjectQueue('candle-queue')
     private readonly candleQueue: Queue,
   ) {}
 
