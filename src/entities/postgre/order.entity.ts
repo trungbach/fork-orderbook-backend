@@ -55,9 +55,9 @@ export class Order {
   tradeSequence: number;
 
   @Column({
-    // type: 'decimal',
-    // precision: 32,
-    // scale: 16,
+    type: 'decimal',
+    precision: 32,
+    scale: 16,
   })
   volume: number;
 
