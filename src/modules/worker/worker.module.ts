@@ -10,6 +10,9 @@ import { OrderConsumer } from './consumers/order-consumer';
     BullModule.registerQueue({
       name: 'order-queue',
     }),
+    BullModule.registerQueue({
+      name: 'candle-queue',
+    }),
   ],
 })
 export class WorkerModule {}

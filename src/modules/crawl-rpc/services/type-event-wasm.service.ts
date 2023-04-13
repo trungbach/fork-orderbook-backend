@@ -123,17 +123,11 @@ export class TypeEventWasm {
           break;
       }
     }
-    /**
-     * buy token -> keep value
-     * sell token -> reverse amount, price, token from, to
-     */
-    if (orderEvent.side === OrderDirection.Sell) {
-      const volumAmount = orderEvent.amount;
-      orderEvent.amount = orderEvent.volume;
-      orderEvent.volume = volumAmount;
-    }
     if (orderEvent.amount) {
       orderEvent.price = orderEvent.volume / orderEvent.amount;
+      if (orderEvent.side === OrderDirection.Sell) {
+        orderEvent.price = 1 / orderEvent.price;
+      }
     }
     orderEvent.productId = await this.findProductId(tokenFrom, tokenTo);
     if (!orderEvent.productId) {
@@ -254,18 +248,11 @@ export class TypeEventWasm {
           break;
       }
     }
-
-    /**
-     * buy token -> keep value
-     * sell token -> reverse amount, price, token from, to
-     */
-    if (orderEvent.side === OrderDirection.Sell) {
-      const volumAmount = orderEvent.amount;
-      orderEvent.amount = orderEvent.volume;
-      orderEvent.volume = volumAmount;
-    }
     if (orderEvent.amount) {
       orderEvent.price = orderEvent.volume / orderEvent.amount;
+      if (orderEvent.side === OrderDirection.Sell) {
+        orderEvent.price = 1 / orderEvent.price;
+      }
     }
     orderEvent.action = OrderAction.EXECUTE_ORDER;
     return orderEvent;

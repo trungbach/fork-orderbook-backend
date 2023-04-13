@@ -15,6 +15,7 @@ jobs:
         id: npm-cache-dir
         run: |
           echo "dir=$(npm config get cache)"  >> $GITHUB_OUTPUT
+          sudo apt-get install gh
 
       - name: Build and push image
         env:
@@ -22,7 +23,9 @@ jobs:
           INAME: ${{ secrets.IMAGE_REPO }}:${{ github.ref_name }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          sudo apt-get install gh
           chmod 777 -R ./ci
           ./ci/build.sh
 
