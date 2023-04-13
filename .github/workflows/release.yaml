@@ -24,6 +24,7 @@ jobs:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROD: product
         run: |
           sudo apt-get install gh
           chmod 777 -R ./ci

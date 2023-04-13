@@ -25,7 +25,6 @@ jobs:
           INAME: ${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-
         run: |
           chmod 777 -R ./ci
           ./ci/build.sh

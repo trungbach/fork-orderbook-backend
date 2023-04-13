@@ -8,36 +8,36 @@ const seeds: Order[] = [
     productId: 1,
     price: 1,
     userId: 1,
-    amount: 100,
+    askAmount: 100,
     side: 1,
     time: momen(new Date()).unix(),
     status: 1,
     tradeSequence: 1,
-    volume: 0
+    offerAmount: 0
   },
   {
     id: 2,
     productId: 1,
     price: 1,
     userId: 1,
-    amount: 100,
+    askAmount: 100,
     side: 1,
     time: momen().unix(),
     status: 2,
     tradeSequence: 2,
-    volume: 0
+    offerAmount: 0
   },
   {
     id: 3,
     productId: 1,
     price: 1,
     userId: 1,
-    amount: 100,
+    askAmount: 100,
     side: 1,
     time: momen().unix(),
     status: 2,
     tradeSequence: 3,
-    volume: 0
+    offerAmount: 0
   },
 ];
 

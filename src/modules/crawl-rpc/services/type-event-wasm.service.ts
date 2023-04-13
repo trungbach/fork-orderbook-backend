@@ -107,7 +107,7 @@ export class TypeEventWasm {
           if (assetTo.length !== 2) {
             break;
           }
-          orderEvent.volume = Number(assetTo[0]);
+          orderEvent.offer_amount = Number(assetTo[0]);
           tokenTo = assetTo[1].toLowerCase();
           break;
         case 'ask_asset':
@@ -115,7 +115,7 @@ export class TypeEventWasm {
           if (assetFrom.length !== 2) {
             break;
           }
-          orderEvent.amount = Number(assetFrom[0]);
+          orderEvent.ask_amount = Number(assetFrom[0]);
           tokenFrom = assetFrom[1].toLowerCase();
           break;
         default:
@@ -123,8 +123,8 @@ export class TypeEventWasm {
           break;
       }
     }
-    if (orderEvent.amount) {
-      orderEvent.price = orderEvent.volume / orderEvent.amount;
+    if (orderEvent.ask_amount) {
+      orderEvent.price = orderEvent.offer_amount / orderEvent.ask_amount;
       if (orderEvent.side === OrderDirection.Sell) {
         orderEvent.price = 1 / orderEvent.price;
       }
@@ -160,7 +160,7 @@ export class TypeEventWasm {
           if (assetFrom.length === 0) {
             break;
           }
-          orderEvent.amount = Number(assetFrom[0]);
+          orderEvent.ask_amount = Number(assetFrom[0]);
           break;
         default:
           // nothing
@@ -238,18 +238,18 @@ export class TypeEventWasm {
           orderEvent.tradeStatus = val;
           break;
         case 'filled_offer_amount':
-          orderEvent.volume = Number(val);
+          orderEvent.offer_amount = Number(val);
           break;
         case 'filled_ask_amount':
-          orderEvent.amount = Number(val);
+          orderEvent.ask_amount = Number(val);
           break;
         default:
           // nothing
           break;
       }
     }
-    if (orderEvent.amount) {
-      orderEvent.price = orderEvent.volume / orderEvent.amount;
+    if (orderEvent.ask_amount) {
+      orderEvent.price = orderEvent.offer_amount / orderEvent.ask_amount;
       if (orderEvent.side === OrderDirection.Sell) {
         orderEvent.price = 1 / orderEvent.price;
       }
