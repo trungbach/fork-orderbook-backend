@@ -63,17 +63,17 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     const qb = this.createQueryBuilder('order')
       .where('order.trade_sequence = :tradeSequence', { tradeSequence })
       .andWhere('order.status = :status', { status })
-      .select('SUM(order.amount)', 'sum');
+      .select('SUM(order.ask_amount)', 'sum');
 
     const { sum } = await qb.getRawOne();
     return sum;
   },
 
-  async sumOfVolumeOrder(tradeSequence: number, status: number) {
+  async sumOfOfferAmountOrder(tradeSequence: number, status: number) {
     const qb = this.createQueryBuilder('order')
       .where('order.trade_sequence = :tradeSequence', { tradeSequence })
       .andWhere('order.status = :status', { status })
-      .select('SUM(order.volume)', 'sum');
+      .select('SUM(order.offer_amount)', 'sum');
 
     const { sum } = await qb.getRawOne();
     return sum;
@@ -87,7 +87,7 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       .groupBy('order.price')
       .limit(17) // only get 17 records for display
       .orderBy('order.price', 'DESC')
-      .select(['order.price', 'SUM(order.volume)']);
+      .select(['order.price', 'SUM(order.offer_amount)']);
 
     const result = await qb.getRawMany();
     return result;

@@ -22,11 +22,12 @@ export class Order {
   price: number;
 
   @Column({
+    name: 'ask_amount',
     type: 'decimal',
     precision: 32,
     scale: 16,
   })
-  amount: number;
+  askAmount: number;
 
   @Column()
   side: number;
@@ -55,11 +56,12 @@ export class Order {
   tradeSequence: number;
 
   @Column({
+    name: 'offer_amount',
     type: 'decimal',
     precision: 32,
     scale: 16,
   })
-  volume: number;
+  offerAmount: number;
 
   @CreatedAt()
   created_at?: Date;
@@ -71,21 +73,21 @@ export class Order {
     productId: number,
     userId: number,
     price: number,
-    amount: number,
+    askAmount: number,
     time: number,
     tradeSequence: number,
     side: number,
     status: number,
-    volume: number,
+    offerAmount: number,
   ) {
     this.productId = productId;
     this.userId = userId;
     this.price = price;
-    this.amount = amount;
+    this.askAmount = askAmount;
     this.time = time;
     this.tradeSequence = tradeSequence;
     this.side = side;
     this.status = status;
-    this.volume = volume;
+    this.offerAmount = offerAmount;
   }
 }

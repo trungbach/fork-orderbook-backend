@@ -4,7 +4,12 @@ import { OrderEvent, TradeEvent } from '../types';
 import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
 import * as moment from 'moment';
-import { TICKER_PRICE, OrderAction, OrderStatus } from 'src/utils/constant';
+import {
+  TICKER_PRICE,
+  OrderAction,
+  OrderStatus,
+  OrderSide,
+} from 'src/utils/constant';
 import { logErrorConsole } from 'src/utils/log-provider';
 import { Redis } from 'src/utils';
 
@@ -59,12 +64,12 @@ export class OrderConsumer {
       order.productId,
       order.userId,
       order.price,
-      order.amount,
+      order.ask_amount,
       intTime,
       order.tradeSequence,
       order.side,
       OrderStatus.OPEN,
-      order.volume,
+      order.offer_amount,
     );
 
     await OrdereRepository.save(_order);
@@ -88,8 +93,15 @@ export class OrderConsumer {
   }
 
   private async handleExecuteOrder(order: OrderEvent) {
-    const { tradeSequence, amount, userId, price, side, tradeStatus, volume } =
-      order;
+    const {
+      tradeSequence,
+      ask_amount,
+      userId,
+      price,
+      side,
+      tradeStatus,
+      offer_amount,
+    } = order;
     const intTime = moment(order.time).unix();
 
     const rootOrder = await OrdereRepository.findOne({
@@ -113,41 +125,45 @@ export class OrderConsumer {
         rootOrder.productId,
         userId,
         price,
-        amount,
+        ask_amount,
         intTime,
         tradeSequence,
         side,
         OrderStatus.CLOSE,
-        rootOrder.volume,
+        offer_amount,
       );
 
       await OrdereRepository.save([closeOrder]);
       await this.sendToCandleQueue({
         productId: `${rootOrder.productId}`,
         price: price,
-        volume: volume,
+        volume: OrderSide.BUY
+          ? order.offer_amount
+          : Number(order.offer_amount) * price,
         time: order.time,
       });
       return;
     }
 
     if (tradeStatus === 'PartialFilled') {
-      const totalVolumeFulFilled = await OrdereRepository.sumOfVolumeOrder(
+      const totalVolumeFulFilled = await OrdereRepository.sumOfOfferAmountOrder(
         tradeSequence,
         OrderStatus.FUL_FILLED,
       );
       rootOrder.status = OrderStatus.FILLING;
       await OrdereRepository.save(rootOrder);
 
-      const newOpen =
-        Number(rootOrder.volume) - volume + Number(totalVolumeFulFilled);
-      const fulFilled = Number(rootOrder.volume) - newOpen;
+      const newOfferAmount =
+        Number(rootOrder.offerAmount) -
+        offer_amount +
+        Number(totalVolumeFulFilled);
+      const fulFilled = Number(rootOrder.offerAmount) - newOfferAmount;
 
       const fulFilledOrder = new Order(
         rootOrder.productId,
         userId,
         price,
-        amount,
+        side === OrderSide.BUY ? fulFilled / price : fulFilled * price,
         intTime,
         tradeSequence,
         side,
@@ -158,18 +174,20 @@ export class OrderConsumer {
         rootOrder.productId,
         userId,
         price,
-        newOpen / price,
+        side === OrderSide.BUY
+          ? newOfferAmount / price
+          : newOfferAmount * price,
         intTime,
         tradeSequence,
         side,
         OrderStatus.OPEN,
-        newOpen,
+        newOfferAmount,
       );
       await OrdereRepository.save([newOpenOrder, fulFilledOrder]);
       await this.sendToCandleQueue({
         productId: `${rootOrder.productId}`,
         price: price,
-        volume: price * fulFilled,
+        volume: OrderSide.BUY ? fulFilled : fulFilled * price,
         time: order.time,
       });
 

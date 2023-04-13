@@ -8,22 +8,22 @@ import { OrderSide, OrderStatus } from 'src/utils/constant';
 export class OrderDto {
   id: number;
   price: number;
-  amount: number;
+  ask_amount: number;
   side: number;
   status: number;
   trade_sequence: number;
   time: number;
-  volume: number;
+  offer_amount: number;
 
   constructor(order: Order) {
     this.id = order.id;
     this.price = order.price;
-    this.amount = order.amount;
+    this.ask_amount = order.askAmount;
     this.side = order.side;
     this.status = order.status;
     this.time = order.time;
     this.trade_sequence = order.tradeSequence;
-    this.volume = order.volume;
+    this.offer_amount = order.offerAmount;
   }
 }
 
