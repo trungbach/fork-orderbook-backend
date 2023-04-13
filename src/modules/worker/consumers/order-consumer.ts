@@ -157,18 +157,21 @@ export class OrderConsumer {
         Number(rootOrder.offerAmount) -
         offer_amount +
         Number(totalVolumeFulFilled);
-      const fulFilled = Number(rootOrder.offerAmount) - newOfferAmount;
+      const offerAmountFulFilled =
+        Number(rootOrder.offerAmount) - newOfferAmount;
 
       const fulFilledOrder = new Order(
         rootOrder.productId,
         userId,
         price,
-        side === OrderSide.BUY ? fulFilled / price : fulFilled * price,
+        side === OrderSide.BUY
+          ? offerAmountFulFilled / price
+          : offerAmountFulFilled * price,
         intTime,
         tradeSequence,
         side,
-        fulFilled > 0 ? OrderStatus.FUL_FILLED : OrderStatus.CLOSE,
-        fulFilled,
+        offerAmountFulFilled > 0 ? OrderStatus.FUL_FILLED : OrderStatus.CLOSE,
+        offerAmountFulFilled,
       );
       const newOpenOrder = new Order(
         rootOrder.productId,
@@ -187,7 +190,9 @@ export class OrderConsumer {
       await this.sendToCandleQueue({
         productId: `${rootOrder.productId}`,
         price: price,
-        volume: OrderSide.BUY ? fulFilled : fulFilled * price,
+        volume: OrderSide.BUY
+          ? offerAmountFulFilled
+          : offerAmountFulFilled * price,
         time: order.time,
       });
 
