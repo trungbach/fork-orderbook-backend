@@ -16,8 +16,8 @@ test('test round down half hour', () => {
 
 // test round hour
 test('test round down hour', () => {
-  const realResult = roundTime(new Date('2023-03-28 12:15:00'), 60);
-  const expectResult = 1679979600; //2023-03-28 12:00:00
+  const realResult = roundTime(new Date('2023-03-28T15:12:16.943634115Z'), 60);
+  const expectResult = 1680015600; //2023-03-28 12:00:00
   expect(realResult).toEqual(expectResult);
 });
 
@@ -33,15 +33,15 @@ test('test round down quarter day', () => {
 
 // test round half day
 test('test round down half day', () => {
-  const realResult = roundTime(new Date('2023-03-28 08:09:00'), 12 * 60);
-  const expectResult = 1679961600; //2023-03-28 12:00:00PM
+  const realResult = roundTime(new Date('2023-03-28T15:12:16.943634115Z'), 12 * 60);
+  const expectResult = 1680004800; //2023-03-28 12:00:00PM
   expect(realResult).toEqual(expectResult);
 });
 
 // test round day
 test('test round down day', () => {
-  const realResult = roundTime(new Date('2023-03-28 09:30:00'), 24 * 60);
-  const expectResult = 1679961600; //2023-03-28 00:00:00
+  const realResult = roundTime(new Date('2023-03-28T15:12:16.943634115Z'), 24 * 60);
+  const expectResult = 1680048000; //2023-03-28 00:00:00
   expect(realResult).toEqual(expectResult);
 });
 
