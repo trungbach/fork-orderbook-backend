@@ -1,0 +1,36 @@
+name: Call run unit test
+
+on:
+  workflow_call:
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 18
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout source code
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run unit test
+        run: |
+          npm run test
+
+      - name: Notify to Discord
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          username: "docker-push-image"
+          message: ":green_circle: The docker image with hash `${{ secrets.IMAGE_REPO }}:${{ env.IVERSION }}` was published"

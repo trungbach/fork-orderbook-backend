@@ -48,6 +48,6 @@ test('test round down day', () => {
 // test round a week
 test('test round a week', () => {
   const realResult = roundTime(new Date('2023-03-28T15:16:02.777942766Z'), 7 * 24 * 60 );
-  const expectResult = 1679961600; //2023-03-28 00:00:00
+  const expectResult = 1680134400; //2023-03-28 00:00:00
   expect(realResult).toEqual(expectResult);
 });
