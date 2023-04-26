@@ -10,10 +10,10 @@ export class CandleDto {
 
   constructor(candle: Candle) {
     this.time = +candle.time;
-    this.open = +candle.open;
-    this.close = +candle.close;
-    this.high = +candle.high;
-    this.low = +candle.low;
-    this.volume = +candle.volume;
+    this.open = candle.open;
+    this.close = candle.close;
+    this.high = candle.high;
+    this.low = candle.low;
+    this.volume = candle.volume;
   }
 }
