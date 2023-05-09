@@ -1,22 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { Candle } from 'src/entities/postgre';
 import { CandleRepository } from 'src/repositories/postgre';
 import { CandleDto } from '../models/candle.dto';
+import { of, catchError, from, retry } from 'rxjs';
 
 @Injectable()
 export class CandleService {
-  async getCandlesByProduct(
+  getCandlesByProduct(
     productId: number,
     granularity: number,
     startTime: number,
     endTime: number,
-  ): Promise<CandleDto[]> {
-    const candles = await CandleRepository.findCandlesbyByProductId(
-      productId,
-      granularity,
-      startTime,
-      endTime,
+  ) {
+    return from<CandleDto[]>(
+      CandleRepository.findCandlesbyByProductId(
+        productId,
+        granularity,
+        startTime,
+        endTime,
+      ),
+    ).pipe(
+      catchError((err) =>
+        of({
+          error: true,
+          message: `${this.getCandlesByProduct} - Something wrongs`,
+        }),
+      ),
+      retry({
+        count: 2,
+        resetOnSuccess: true
+      })
     );
-    return candles.map((candle: Candle) => new CandleDto(candle))
   }
 }

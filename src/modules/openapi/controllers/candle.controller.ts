@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CandleService } from '../services/candle.service';
-
+1683600483;
 @ApiTags('Candles')
 @Controller('/v1/candles')
 export class CandleController {
@@ -11,16 +11,16 @@ export class CandleController {
     name: 'product_id',
     required: true,
     description: 'query by product id',
-    type: Number
+    type: Number,
   })
   @Get('/:product_id')
-  async listCandleByGranularity(
+  listCandleByGranularity(
     @Param('product_id') product_id: number,
     @Query('granularity') granularity: number,
     @Query('startTime') startTime: number,
     @Query('endTime') endTime: number,
   ) {
-    return await this.candleService.getCandlesByProduct(
+    return this.candleService.getCandlesByProduct(
       product_id,
       granularity,
       startTime,

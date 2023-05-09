@@ -23,7 +23,15 @@ export const CandleRepository = PostgresDB.getRepository(Candle).extend({
       .where('candle.product_id = :product_id', { product_id: productId })
       .andWhere('candle.granularity = :granularity', { granularity })
       .andWhere('candle.time >= :startTime', { startTime })
-      .andWhere('candle.time <= :endTime', { endTime });
+      .andWhere('candle.time <= :endTime', { endTime })
+      .select([
+        'candle.time',
+        'candle.open',
+        'candle.close',
+        'candle.high',
+        'candle.low',
+        'candle.volume',
+      ]);
 
     const candles = qb.getMany();
     return candles;
