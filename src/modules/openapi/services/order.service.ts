@@ -21,7 +21,7 @@ export class OrderService {
     address?: string,
     status?: string[],
     side?: string[],
-  ): Promise<PageList<OrderDto[]>> {
+  ): Promise<PageList<Order[]>> {
     const product = await ProductRepository.findOne({
       where: { id: productId },
     });
@@ -32,11 +32,11 @@ export class OrderService {
     }
 
     if (!product) {
-      return new PageList<OrderDto[]>([]);
+      return new PageList<Order[]>([]);
     }
 
     if (address && !user) {
-      return new PageList<OrderDto[]>([]);
+      return new PageList<Order[]>([]);
     }
 
     const params = {
@@ -50,8 +50,8 @@ export class OrderService {
 
     const orders = await OrdereRepository.findOrderByProduct(params);
 
-    const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<OrderDto[]>(items);
+    // const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
+    return new PageList<Order[]>(orders);
   }
 
   async getByAddress(

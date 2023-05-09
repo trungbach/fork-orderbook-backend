@@ -40,7 +40,16 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
     const orders = await qb
       .limit(params.limit)
       .offset(params.offset)
-      .select()
+      .select([
+        'order.time',
+        'order.side',
+        'order.status',
+        'order.tradeSequence',
+        'order.offerAmount',
+        'order.askAmount',
+        'order.price',
+        'order.id',
+      ])
       .getMany();
     return orders;
   },
