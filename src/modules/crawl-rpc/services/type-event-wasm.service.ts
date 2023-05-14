@@ -262,15 +262,16 @@ export class TypeEventWasm {
     orderEvent: OrderEvent | OrderEvent[],
     txsData: TxsBasic,
   ) {
-    if (Array.isArray(orderEvent)) {
-      if (orderEvent.length === 0) {
+    if (!orderEvent) {
         return;
-      }
-    } else {
-      if (!orderEvent) {
+    }
+
+    if (!Array.isArray(orderEvent)) {
+        orderEvent = [orderEvent];
+    }
+
+    if (orderEvent.length < 1) {
         return;
-      }
-      orderEvent = [orderEvent];
     }
 
     try {
@@ -323,16 +324,18 @@ export class TypeEventWasm {
   private async storeTransaction(
     orderEvent: OrderEvent | OrderEvent[],
     txsData: TxsBasic,
-  ) {
+  ): Promise<boolean> {
     const item = await TxsRepository.findOne({
       select: ['hash'],
       where: {
         hash: txsData.hash,
       },
     });
+
     if (item) {
       return true;
     }
+
     await TxsRepository.save(
       TxsRepository.create({
         hash: txsData.hash,
