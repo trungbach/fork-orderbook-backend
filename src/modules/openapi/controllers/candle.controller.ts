@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CandleService } from '../services/candle.service';
-1683600483;
 @ApiTags('Candles')
 @Controller('/v1/candles')
 export class CandleController {
