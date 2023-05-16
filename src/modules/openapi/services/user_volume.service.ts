@@ -17,9 +17,15 @@ export class UserVolumeService {
       granularity,
     );
 
-    return plainToClass(UserVolumeDto, userVolume, {
-      excludeExtraneousValues: true,
-    });
+    return (
+      plainToClass(UserVolumeDto, userVolume, {
+        excludeExtraneousValues: true,
+      }) || {
+        address,
+        volume: '0',
+        granularity,
+      }
+    );
   }
 
   async getTopUserVolume(
@@ -48,7 +54,7 @@ export class UserVolumeService {
           granularity,
           address,
           productId: product_id,
-          volume: sumBy(arr,'volume'),
+          volume: sumBy(arr, 'volume'),
         };
       })
       .value();
