@@ -52,10 +52,6 @@ export class ApiModule implements NestModule {
         path: '/v1/candle*',
         method: RequestMethod.GET,
       },
-      {
-        path: '/v1/volumes*',
-        method: RequestMethod.GET,
-      },
     );
   }
 }
