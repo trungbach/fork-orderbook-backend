@@ -1,6 +1,6 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
-import { OrderEvent, TradeEvent } from '../types';
+import { OrderEvent, TradeEvent, TradeUserEvent } from '../types';
 import { Order } from 'src/entities/postgre';
 import { OrdereRepository } from 'src/repositories/postgre';
 import * as moment from 'moment';
@@ -18,6 +18,9 @@ export class OrderConsumer {
   constructor(
     @InjectQueue('candle-queue')
     private readonly candleQueue: Queue,
+
+    @InjectQueue('trade-queue')
+    private readonly tradeQueue: Queue,
   ) {}
 
   @Process('order-job')
@@ -142,6 +145,15 @@ export class OrderConsumer {
           : Number(order.offer_amount) * price,
         time: order.time,
       });
+      await this.sendToUserTradeQueue({
+        productId: `${rootOrder.productId}`,
+        userId: rootOrder.userId,
+        price: price,
+        volume: OrderSide.BUY
+          ? order.offer_amount
+          : Number(order.offer_amount) * price,
+        time: order.time,
+      });
       return;
     }
 
@@ -195,6 +207,15 @@ export class OrderConsumer {
           : offerAmountFulFilled * price,
         time: order.time,
       });
+      await this.sendToUserTradeQueue({
+        productId: `${rootOrder.productId}`,
+        userId: rootOrder.userId,
+        price: price,
+        volume: OrderSide.BUY
+          ? offerAmountFulFilled
+          : offerAmountFulFilled * price,
+        time: order.time,
+      });
 
       return;
     }
@@ -205,6 +226,18 @@ export class OrderConsumer {
       event = [event];
     }
     await this.candleQueue.add('candle-job', event, {
+      removeOnComplete: true,
+      removeOnFail: false,
+      attempts: 3,
+    });
+  }
+
+  private async sendToUserTradeQueue(event: TradeUserEvent | TradeUserEvent[]) {
+    if (!Array.isArray(event)) {
+      event = [event];
+    }
+
+    await this.tradeQueue.add('trade-job', event, {
       removeOnComplete: true,
       removeOnFail: false,
       attempts: 3,

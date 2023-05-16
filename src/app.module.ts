@@ -21,7 +21,9 @@ let importModules = [
 
 if (config.isRunCmd) {
   // run command line
-  importModules = importModules.concat([CommandModule, WorkerModule]);
+  importModules = importModules.concat([
+    CommandModule, 
+    WorkerModule]);
 } else {
   // run web
   importModules = importModules.concat([

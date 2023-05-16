@@ -73,6 +73,8 @@ export class CandleConsumer {
         await this.handleNewCandles(candles);
       }
     }
+
+    return;
   }
 
   private async handleNewCandles(candles: { [key: string]: Candle }) {
