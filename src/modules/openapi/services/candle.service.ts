@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CandleRepository } from 'src/repositories/postgre';
-import { CandleDto } from '../models/candle.dto';
-import { of, catchError, from, retry } from 'rxjs';
+import { CandleDto, CandlesDto } from '../models/candle.dto';
+import { map, of, catchError, from, retry } from 'rxjs';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class CandleService {
@@ -19,6 +20,13 @@ export class CandleService {
         endTime,
       ),
     ).pipe(
+      map((candles) => {
+        return plainToClass(
+          CandlesDto,
+          { candles },
+          { excludeExtraneousValues: true },
+        ).candles;
+      }),
       catchError((err) =>
         of({
           error: true,
@@ -27,8 +35,8 @@ export class CandleService {
       ),
       retry({
         count: 2,
-        resetOnSuccess: true
-      })
+        resetOnSuccess: true,
+      }),
     );
   }
 }

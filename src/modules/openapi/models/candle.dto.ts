@@ -1,19 +1,26 @@
-import { Candle } from 'src/entities/postgre';
+import { Expose, Type } from 'class-transformer';
 
+export class CandlesDto {
+  @Expose()
+  @Type(() => CandleDto)
+  candles: CandleDto[];
+}
 export class CandleDto {
+  @Expose({ name: 'time' })
   time: number;
-  open: number;
-  close: number;
-  high: number;
-  low: number;
-  volume: number;
 
-  constructor(candle: Candle) {
-    this.time = +candle.time;
-    this.open = candle.open;
-    this.close = candle.close;
-    this.high = candle.high;
-    this.low = candle.low;
-    this.volume = candle.volume;
-  }
+  @Expose({ name: 'open' })
+  open: string;
+
+  @Expose({ name: 'close' })
+  close: string;
+
+  @Expose({ name: 'high' })
+  high: string;
+
+  @Expose({ name: 'low' })
+  low: string;
+
+  @Expose({ name: 'volume' })
+  volume: string;
 }

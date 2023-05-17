@@ -41,16 +41,16 @@ export const OrdereRepository = PostgresDB.getRepository(Order).extend({
       .limit(params.limit)
       .offset(params.offset)
       .select([
-        'order.time',
-        'order.side',
-        'order.status',
-        'order.tradeSequence',
-        'order.offerAmount',
-        'order.askAmount',
-        'order.price',
-        'order.id',
+        'order.time AS time',
+        'order.side AS side',
+        'order.status AS status',
+        'order.tradeSequence AS trade_sequence',
+        'order.offerAmount AS offer_amount',
+        'order.askAmount AS ask_amount',
+        'order.price AS price',
+        'order.id AS id',
       ])
-      .getMany();
+      .getRawMany();
     return orders;
   },
 

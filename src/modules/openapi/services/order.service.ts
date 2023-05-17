@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Order, User } from 'src/entities/postgre';
+import { User } from 'src/entities/postgre';
 import {
   OrdereRepository,
   ProductRepository,
   UserRepository,
 } from 'src/repositories/postgre';
-import { OrderDto } from '../models/order.dto';
+import { OrderDto, OrdersDto } from '../models/order.dto';
 import { PageList } from '../models/page-list.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class OrderService {
@@ -21,7 +22,7 @@ export class OrderService {
     address?: string,
     status?: string[],
     side?: string[],
-  ): Promise<PageList<Order[]>> {
+  ): Promise<PageList<OrderDto[]>> {
     const product = await ProductRepository.findOne({
       where: { id: productId },
     });
@@ -32,11 +33,11 @@ export class OrderService {
     }
 
     if (!product) {
-      return new PageList<Order[]>([]);
+      return new PageList<OrderDto[]>([]);
     }
 
     if (address && !user) {
-      return new PageList<Order[]>([]);
+      return new PageList<OrderDto[]>([]);
     }
 
     const params = {
@@ -49,9 +50,13 @@ export class OrderService {
     };
 
     const orders = await OrdereRepository.findOrderByProduct(params);
+    const data = plainToInstance(
+      OrdersDto,
+      { orders },
+      { excludeExtraneousValues: true },
+    );
 
-    // const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<Order[]>(orders);
+    return new PageList<OrderDto[]>(data.orders);
   }
 
   async getByAddress(
@@ -60,8 +65,13 @@ export class OrderService {
     offset: number,
   ): Promise<PageList<OrderDto[]>> {
     const orders = await OrdereRepository.findByAddress(address, limit, offset);
-    const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<OrderDto[]>(items);
+    return new PageList<OrderDto[]>(
+      plainToInstance(
+        OrdersDto,
+        { orders },
+        { excludeExtraneousValues: true },
+      ).orders,
+    );
   }
 
   async getRecentTraded(
@@ -75,15 +85,18 @@ export class OrderService {
       offset,
     );
 
-    const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
-    return new PageList<OrderDto[]>(items);
+    // const items: OrderDto[] = orders.map((order: Order) => new OrderDto(order));
+    return new PageList<OrderDto[]>(
+      plainToInstance(
+        OrdersDto,
+        { orders },
+        { excludeExtraneousValues: true },
+      ).orders,
+    );
   }
 
-  async getOpen(
-    product_id: number, 
-    side: number
-  ) {
+  async getOpen(product_id: number, side: number) {
     const orders = await OrdereRepository.findOpenOrders(product_id, side);
-    return orders
+    return orders;
   }
 }

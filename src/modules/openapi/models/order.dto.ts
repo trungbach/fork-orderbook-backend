@@ -1,30 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Expose, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { trim } from 'lodash';
-import { Order } from 'src/entities/postgre';
 import { OrderSide, OrderStatus } from 'src/utils/constant';
 
-export class OrderDto {
-  id: number;
-  price: number;
-  ask_amount: number;
-  side: number;
-  status: number;
-  trade_sequence: number;
-  time: number;
-  offer_amount: number;
+export class OrdersDto {
+  @Expose()
+  @Type(() => OrderDto)
+  orders: OrderDto[];
+}
 
-  constructor(order: Order) {
-    this.id = order.id;
-    this.price = order.price;
-    this.ask_amount = order.askAmount;
-    this.side = order.side;
-    this.status = order.status;
-    this.time = order.time;
-    this.trade_sequence = order.tradeSequence;
-    this.offer_amount = order.offerAmount;
-  }
+export class OrderDto {
+  @Expose({ name: 'id' })
+  id: number;
+
+  @Expose({ name: 'price' })
+  price: number;
+
+  @Expose({ name: 'ask_amount' })
+  ask_amount: string;
+
+  @Expose({ name: 'side' })
+  side: number;
+
+  @Expose({ name: 'status' })
+  status: number;
+
+  @Expose({ name: 'trade_sequence' })
+  trade_sequence: number;
+
+  @Expose()
+  time: number;
+
+  @Expose({ name: 'offer_amount' })
+  offer_amount: string;
 }
 
 export class QueryOrderDto {

@@ -25,15 +25,15 @@ export const CandleRepository = PostgresDB.getRepository(Candle).extend({
       .andWhere('candle.time >= :startTime', { startTime })
       .andWhere('candle.time <= :endTime', { endTime })
       .select([
-        'candle.time',
-        'candle.open',
-        'candle.close',
-        'candle.high',
-        'candle.low',
-        'candle.volume',
+        'candle.time AS time',
+        'candle.open AS open',
+        'candle.close AS close',
+        'candle.high AS high',
+        'candle.low AS low',
+        'candle.volume AS volume',
       ]);
 
-    const candles = qb.getMany();
+    const candles = qb.getRawMany();
     return candles;
   },
 });
