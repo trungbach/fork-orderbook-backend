@@ -7,7 +7,6 @@ import { TICKER_PRICE } from 'src/utils/constant';
 @ApiTags('Products')
 @Controller('product')
 export class ProductController {
-
   @Get('list')
   async getlList() {
     return ProductRepository.find();
@@ -16,9 +15,9 @@ export class ProductController {
   @Get(':product_id/current_price')
   async getCurrentPrice(@Param('product_id') product_id: number) {
     const redis = await Redis.getInstance();
-    const price = await redis.get(`${product_id}.${TICKER_PRICE}`) || 0;
+    const price = (await redis.get(`${product_id}.${TICKER_PRICE}`)) || 0;
     return {
-      product_id: price,
+      price,
     };
   }
 }
