@@ -54,7 +54,13 @@ export class UserVolumeService {
           granularity,
           address,
           productId: product_id,
-          volume: sumBy(arr, 'volume'),
+          volume: String(
+            sumBy(arr, (vol) => {
+              return Number(vol.volume) > Number.MAX_SAFE_INTEGER 
+                ? Number.MAX_SAFE_INTEGER // adhoc: default value for prevent volume is big
+                : Number(vol.volume);
+            }),
+          ),
         };
       })
       .value();
