@@ -9,7 +9,7 @@ import * as moment from 'moment';
 @Injectable()
 export class CandleMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const GRANULARITY_ARR = [1, 5, 15, 30, 60, 360, 1440];
+    const GRANULARITY_ARR = [1, 5, 15, 30, 60, 120, 240, 360, 1440];
 
     const granularity = +req.query['granularity'];
     const startTime = +req.query['startTime'];
