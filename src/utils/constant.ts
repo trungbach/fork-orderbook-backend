@@ -33,3 +33,7 @@ export const OrderStatusParams = {
 };
 
 export const TICKER_PRICE = 'ticker';
+export const BOT_ADDRESSES = [
+  'orai1tjnzc2ynnwzqrdsk4uwpqlta36xjcntcnzeyy0',
+  'orai1vsv3dudchgg65wlkv6uz35qexaypg03mqwwmt2',
+];

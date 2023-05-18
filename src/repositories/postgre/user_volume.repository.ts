@@ -1,3 +1,4 @@
+import { BOT_ADDRESSES } from 'src/utils/constant';
 import PostgresDB from '../../config/postgres';
 import { UserVolume } from '../../entities/postgre';
 
@@ -16,6 +17,9 @@ export const UserVolumeRepository = PostgresDB.getRepository(UserVolume).extend(
         .andWhere('user_volume.granularity = :granularity', { granularity })
         .andWhere('user_volume.time >= :startTime', { startTime })
         .andWhere('user_volume.time <= :endTime', { endTime })
+        .andWhere('user.address NOT IN (:...addresses)', {
+          addresses: BOT_ADDRESSES,
+        })
         .leftJoin('o_user', 'user', 'user.id = user_volume.user_id')
         .select([
           'user_volume.time AS time',
