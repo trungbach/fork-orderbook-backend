@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UserVolumeRepository } from 'src/repositories/postgre/user_volume.repository';
-import { chain, sumBy } from 'lodash';
 import { plainToClass } from 'class-transformer';
 import { UserVolumeDto, UsersVolumeDto } from '../models/user_volume.dto';
 

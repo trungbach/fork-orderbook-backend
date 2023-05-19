@@ -13,7 +13,7 @@ export class UserVolumeDto {
   //   user_id: number;
 
   @Expose({ name: 'total_volume' })
-  total_volume: string;
+  volume: string;
 
   //   @Expose({ name: 'granularity' })
   //   granularity: number;
