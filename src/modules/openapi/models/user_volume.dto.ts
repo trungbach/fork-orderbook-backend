@@ -1,15 +1,20 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
+export class UsersVolumeDto {
+  @Expose()
+  @Type(() => UserVolumeDto)
+  volumes: UserVolumeDto[];
+}
 export class UserVolumeDto {
-  @Expose({ name: 'address'})
+  @Expose({ name: 'address' })
   address: string;
 
-  @Expose({ name: 'product_id' })
-  product_id: number;
+  //   @Expose({ name: 'product_id' })
+  //   user_id: number;
 
-  @Expose({ name: 'volume' })
-  volume: string;
+  @Expose({ name: 'total_volume' })
+  total_volume: string;
 
-  @Expose({ name: 'granularity' })
-  granularity: number;
+  //   @Expose({ name: 'granularity' })
+  //   granularity: number;
 }

@@ -16,17 +16,18 @@ export const UserVolumeRepository = PostgresDB.getRepository(UserVolume).extend(
         })
         .andWhere('user_volume.granularity = :granularity', { granularity })
         .andWhere('user_volume.time >= :startTime', { startTime })
-        .andWhere('user_volume.time <= :endTime', { endTime })
+        .andWhere('user_volume.time < :endTime', { endTime })
         .andWhere('user.address NOT IN (:...addresses)', {
           addresses: BOT_ADDRESSES,
         })
         .leftJoin('o_user', 'user', 'user.id = user_volume.user_id')
+        .groupBy('user_volume.user_id')
+        .addGroupBy('user.address')
+        .orderBy('total_volume', 'DESC')
         .select([
-          'user_volume.time AS time',
+          'SUM(user_volume.volume) AS total_volume',
+          'user.address as address',
           'user_volume.user_id AS user_id',
-          'user_volume.product_id AS product_id',
-          'user_volume.volume AS volume',
-          'user.address AS address',
         ]);
 
       const volumes = qb.getRawMany();

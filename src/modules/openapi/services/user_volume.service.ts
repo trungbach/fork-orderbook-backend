@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserVolumeRepository } from 'src/repositories/postgre/user_volume.repository';
 import { chain, sumBy } from 'lodash';
 import { plainToClass } from 'class-transformer';
-import { UserVolumeDto } from '../models/user_volume.dto';
+import { UserVolumeDto, UsersVolumeDto } from '../models/user_volume.dto';
 
 @Injectable()
 export class UserVolumeService {
@@ -41,29 +41,13 @@ export class UserVolumeService {
       endTime,
     );
 
-    const result = chain(topVolumes)
-      .map((volume) =>
-        plainToClass(UserVolumeDto, volume, {
-          excludeExtraneousValues: true,
-        }),
-      )
-      .groupBy('address')
-      .map((arr) => {
-        const { granularity, address, product_id } = arr[0];
-        return {
-          granularity,
-          address,
-          productId: product_id,
-          volume: String(
-            sumBy(arr, (vol) => {
-              return Number(vol.volume) > Number.MAX_SAFE_INTEGER 
-                ? Number.MAX_SAFE_INTEGER // adhoc: default value for prevent volume is big
-                : Number(vol.volume);
-            }),
-          ),
-        };
-      })
-      .value();
+    const result = plainToClass(
+      UsersVolumeDto,
+      { volumes: topVolumes },
+      {
+        excludeExtraneousValues: true,
+      },
+    ).volumes;
 
     return result;
   }
