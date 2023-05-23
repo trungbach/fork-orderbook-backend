@@ -10,7 +10,7 @@ import { OrderConsumer } from './order-consumer';
 
 @Processor('candle-queue')
 export class CandleConsumer {
-  private GRANULARITY_ARR = [1, 5, 15, 30, 60, 120, 240, 360, 1440];
+  private GRANULARITY_ARR = [1, 5, 15, 30, 60, 120, 240, 360, 480, 720, 1440];
 
   constructor() {
     // inject logging service
