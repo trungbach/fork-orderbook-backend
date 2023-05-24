@@ -29,6 +29,7 @@
 # Scripts
 
 ## migration
+
 - `npm run typeorm migration:run`: run all migration file.
 - `npm run typeorm migration:revert`: Reverts last executed migration.
 - `npm run typeorm_nd migration:create src/database/migrations/CreateTable-AlterTable`: create file migration.
@@ -40,13 +41,15 @@
 1. In file custom.seed.ts, create class CustomSeed, has function `run()`
 1. Run cmd: `npm run cmd seed -- --class=custom`
 
-##  Development 
+## Development
 
 ##### 1. Run crawl order
-Scan all block from RPC: `npm run cmd:prod scan-block` (build before run).  
+
+Scan all block from RPC: `npm run cmd:prod scan-block` (build before run: npm run build).  
 (if dev, can run: "npm run cmd scan-block", run file .ts, not need build)
 
 ## Docs feature
+
 [Docs feature view here](docs/)
 
 ## Installation
@@ -80,8 +83,6 @@ $ yarn test:e2e
 # test coverage
 $ yarn test:cov
 ```
-
-
 
 ## Support
 

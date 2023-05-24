@@ -25,6 +25,12 @@ export class Product {
   @Column()
   to: string;
 
+  @Column({
+    name: 'contract_address',
+    type: 'varchar',
+  })
+  contractAddress: string;
+
   @CreatedAt()
   created_at?: Date;
 

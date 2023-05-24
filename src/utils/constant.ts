@@ -11,6 +11,11 @@ export enum OrderSide {
   BUY = 2,
 }
 
+export enum OrderDirectionContract {
+  SELL = 'sell',
+  BUY = 'buy',
+}
+
 /**
  * direction key = direction of contract response
  */

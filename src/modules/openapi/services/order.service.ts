@@ -8,10 +8,14 @@ import {
 import { OrderDto, OrdersDto } from '../models/order.dto';
 import { PageList } from '../models/page-list.dto';
 import { plainToInstance } from 'class-transformer';
+import { HttpService } from '@nestjs/axios';
+import { catchError, lastValueFrom, of, retry, map } from 'rxjs';
+import { transformOrderContract } from 'src/utils';
+import { OrderDirectionContract } from 'src/utils/constant';
 
 @Injectable()
 export class OrderService {
-  constructor() {
+  constructor(private readonly httpService: HttpService) {
     //inject
   }
 
@@ -98,5 +102,115 @@ export class OrderService {
   async getOpen(product_id: number, side: number) {
     const orders = await OrdereRepository.findOpenOrders(product_id, side);
     return orders;
+  }
+
+  async getOrderFromContract(ticker_id: string) {
+    const symbol = ticker_id.replace('_', '/');
+    const product = await ProductRepository.findOne({ where: { symbol } });
+    if (!product) {
+      return {};
+    }
+    const ordersSell = await lastValueFrom(
+      this.httpService.get<any>('').pipe(
+        map((response) => response.data),
+        catchError((err) => of([])),
+        retry({
+          count: 2,
+          resetOnSuccess: true,
+        }),
+      ),
+    );
+
+    const ordersBuy = await lastValueFrom(
+      this.httpService.get<any>('').pipe(
+        map((response) => response.data as any),
+        catchError((err) => of([])),
+        retry({
+          count: 2,
+          resetOnSuccess: true,
+        }),
+      ),
+    );
+
+    // const orderTestSell = [
+    //   {
+    //     order_id: 57858,
+    //     status: 'open',
+    //     direction: 'sell',
+    //     bidder_addr: 'orai1ejvyzku2upg0q5a6n9nd9cwa29a830hegc488r',
+    //     offer_asset: {
+    //       info: {
+    //         native_token: {
+    //           denom: 'orai',
+    //         },
+    //       },
+    //       amount: '1000000',
+    //     },
+    //     ask_asset: {
+    //       info: {
+    //         token: {
+    //           contract_addr: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+    //         },
+    //       },
+    //       amount: '4000000',
+    //     },
+    //     filled_offer_amount: '0',
+    //     filled_ask_amount: '0',
+    //   },
+    // ];
+
+    // const orderTestBuy = [
+    //   {
+    //     order_id: 58139,
+    //     status: 'open',
+    //     direction: 'buy',
+    //     bidder_addr: 'orai1krzyd6jhmvf99x09m8gs5rlj2sfeh4n62wzng9',
+    //     offer_asset: {
+    //       info: {
+    //         token: {
+    //           contract_addr: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+    //         },
+    //       },
+    //       amount: '343800000',
+    //     },
+    //     ask_asset: {
+    //       info: {
+    //         native_token: {
+    //           denom: 'orai',
+    //         },
+    //       },
+    //       amount: '90000000',
+    //     },
+    //     filled_offer_amount: '0',
+    //     filled_ask_amount: '0',
+    //   },
+    // ];
+
+    // const listSell = transformOrderContract(
+    //   orderTestSell as any,
+    //   OrderDirectionContract.SELL,
+    // );
+
+    // const listBuy = transformOrderContract(
+    //   orderTestBuy as any,
+    //   OrderDirectionContract.BUY,
+    // );
+
+    const listSell = transformOrderContract(
+      ordersSell as any,
+      OrderDirectionContract.SELL,
+    );
+
+    const listBuy = transformOrderContract(
+      ordersBuy as any,
+      OrderDirectionContract.BUY,
+    );
+
+    return {
+      ticker_id,
+      timestamp: Date.now(),
+      bids: listSell,
+      ask: listBuy,
+    };
   }
 }
